@@ -1,0 +1,5 @@
+Paper,Year,Task,Dataset / Domain,Cost Metric,Performance Metric,Key Curve Data,Compute Cost,Annotation Cost ($),Energy / CO₂,Notes / Caveats
+Dragut et al. 2019,2019,"Entity extraction (regex vs. labels)","Retail product descriptions","Annotator minutes","F1","0:0.58;30:0.72;60:0.78;120:0.80",N/A,0.10/span,N/A,"F1 plateaus after 120 min"
+Kang et al. 2023,2023,"Distill vs. Annotate (6 NLP tasks)","MNLI, SST-2, etc.","Dollars spent (GPU vs. labels)","Accuracy","0:0.65;100:0.76;300:0.81;600:0.83","Teacher: 8 GPUh per run",0.06/label,"Approx. 15 kg CO₂ / 8 GPUh","Mixed strategy best around 40% compute spend"
+Stiennon et al. 2021,2021,"Summarization with human feedback","CNN/DailyMail summaries","Number of human preference labels","Reward score","0:0.0;5000:0.15;20000:0.24;40000:0.28","Student fine-tune: 4 GPUh",0.05/preference,"Approx. 8 kg CO₂ / 4 GPUh","RL steadily improves with more feedback"
+Strubell et al. 2019,2019,"Energy/CO₂ cost of DL training","BERT pretraining","GPU hours → kWh → kg CO₂","–","GPUh:626 kWh ≈ 280 kg CO₂",Varies,N/A,"280 kg CO₂ for BERT pre-train","Older hardware; modern TPUs more efficient"
