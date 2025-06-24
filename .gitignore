@@ -176,3 +176,4 @@ cython_debug/
 # VS Code / Jupyter miscellaneous
 anaconda_projects/**
 *.db
+tmp_dragut/
