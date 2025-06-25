@@ -1,22 +1,32 @@
 # src/curves.py
-import numpy as np
+"""
+Fit y = a * log(b * x + 1)  (diminishing-returns curve)
+Returns (a, b, r2).
+"""
+
 from typing import List, Tuple
+import numpy as np
+from scipy.optimize import minimize
 
-def fit_log_curve(x: List[float], y: List[float]) -> Tuple[float, float]:
-    """
-    Fit y = a * log(b*x + 1) using least squares.
-    Return (a, b) parameters.
-    """
-    x_arr = np.array(x)
-    y_arr = np.array(y)
 
-    def model(params):
-        a, b = params
-        return a * np.log(b * x_arr + 1)
+def _log_model(x: np.ndarray, a: float, b: float) -> np.ndarray:
+    return a * np.log(b * x + 1.0)
+
+
+def fit_log_curve(x: List[float], y: List[float]) -> Tuple[float, float, float]:
+    x_arr = np.asarray(x, dtype=float)
+    y_arr = np.asarray(y, dtype=float)
 
     def loss(params):
-        return np.sum((model(params) - y_arr) ** 2)
+        a, b = params
+        return np.sum((_log_model(x_arr, a, b) - y_arr) ** 2)
 
-    from scipy.optimize import minimize
-    res = minimize(loss, x0=[1.0, 0.01], bounds=[(0, None), (0, None)])
-    return tuple(res.x)
+    res = minimize(loss, x0=(1.0, 0.01), bounds=((0, None), (0, None)))
+    a_hat, b_hat = res.x
+
+    y_pred = _log_model(x_arr, a_hat, b_hat)
+    sse = np.sum((y_pred - y_arr) ** 2)
+    sst = np.sum((y_arr - y_arr.mean()) ** 2)
+    r2 = 1.0 - sse / sst if sst else 0.0
+
+    return float(a_hat), float(b_hat), float(r2)
