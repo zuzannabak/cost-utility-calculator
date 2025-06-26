@@ -12,6 +12,8 @@ from scipy.optimize import minimize
 def _log_model(x: np.ndarray, a: float, b: float) -> np.ndarray:
     return a * np.log(b * x + 1.0)
 
+# expose _log_model for testing
+log_model = _log_model       # <- add this
 
 def fit_log_curve(x: List[float], y: List[float]) -> Tuple[float, float, float]:
     x_arr = np.asarray(x, dtype=float)
