@@ -40,6 +40,19 @@ jupyter lab
 
 **(Timeline is optimistic; project spans the full 12-week summer term.)**
 
+---
+
+## Quick Start
+
+1. **Clone and install**
+
+```bash
+git clone https://github.com/zuzannabak/cost-utility-calculator.git
+cd cost-utility-calculator
+conda activate cucal          # or your own env
+pip install -r requirements.txt
+
+
 ## References
 Dragut E. C. et al. (2019) How to Invest My Time: Lessons from Human-in-the-Loop Entity Extraction. KDD.
 
