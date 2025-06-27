@@ -28,12 +28,12 @@ jupyter lab
 ```
 
 ## Roadmap
- **Week 0** – confirm abstract; register independent study  
- **Week 1** – literature-review matrix + first prototype curves  
- **Week 2** – fit cost/utility curves to data  
- **Week 3** – implement constrained optimisation routine  
- **Week 4** – minimal Streamlit (or CLI) front-end (prototype simulator)  
- **Week 5** – validate on Dragut entity-extraction case  
+ **Week 0** – confirm abstract; register independent study  ✔
+ **Week 1** – literature-review matrix + first prototype curves  ✔
+ **Week 2** – fit cost/utility curves to data  ✔
+ **Week 3** – implement constrained optimisation routine  ✔
+ **Week 4** – minimal Streamlit (or CLI) front-end (prototype simulator)  ✔ (CLI)
+ **Week 5** – validate on Dragut entity-extraction case  ✔ (WIP ~70%)
  **Week 6** – generalize to summarisation case & refine simulator  
  **Week 7** – draft report, polish plots, add tests  
  **Week 8** – final demo + 6–8 page report
