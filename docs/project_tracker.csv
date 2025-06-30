@@ -4,7 +4,7 @@ Week 1;"Literature-review matrix; Seed prototype curves";"literature_matrix.csv 
 Week 2;Fit cost/utility curves to data;"src/curves.py log-fit + tests (0376a00); Notebook 02 writes data/curves.json (26 Jun; 331dc93)";Done;Re-run when curves update
 Week 3;Constrained optimisation routine;"src/optimizer.py exhaustive $-split search (c677266); Unit tests green (pytest)";Done;Vectorise for speed (low-prio)
 Week 4;Prototype Streamlit / CLI simulator;CLI demo sim.py + Notebook 04 (ae8c9d5);Done;Streamlit UI optional but nice
-Week 5;Validate on Dragut entity-extraction case;"Dragut retail CSVs added (17ba530); Notebook 03_dragut_validate -> first pass needs clean fit";WIP (~70 %);"remove noisy rows; refit with stable log_model; save fig & push"
+Week 5;Validate on Dragut entity-extraction case;"Dragut retail CSVs added (17ba530); Notebook 03_dragut_validate -> first pass needs clean fit";Done (RMSE 0.126);"remove noisy rows; refit with stable log_model; save fig & push"
 Week 6;"Generalise to summarisation (Kang + Stiennon); Refine simulator";Not started;Not started;"Import Stiennon reward data; Fit log curve; append to curves.json"
 Week 7;"Draft report; polish plots; add tests";Not started;Not started;"stub report.md; gather final figures"
 Week 8;"Final demo (UI + CLI); 6-8 page report";Not started;Not started;schedule dry-run with professor
