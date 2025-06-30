@@ -17,17 +17,24 @@ def log_model(x: np.ndarray, a: float, b: float) -> np.ndarray:
     return a * np.log1p(b * x)          # log1p is numerically safer
 
 
-from sklearn.metrics import root_mean_squared_error
+from scipy.optimize import minimize, Bounds
 
 def fit_log_curve(x, y):
     x, y = np.asarray(x, float), np.asarray(y, float)
+    
+    def loss(p):
+        a,b = p
+        return np.sum((log_model(x, a, b) - y)**2)
 
-    # Fit as before...
-    res = minimize(lambda p: np.sum((log_model(x, *p) - y)**2),
-                   x0=(1.0, 0.01), bounds=((0,None),(0,None)))
-    a, b = res.x
+    # sensible initial guess
+    a0 = y.max()*1.05          # just above the plateau
+    b0 = 5.0 / (np.mean(x)+1)  # bends the knee around the middle
 
-    y_hat = log_model(x, a, b)
-    rmse  = root_mean_squared_error(y, y_hat)  # ← replace R²
-    return a, b, rmse
+    # hard lower bound keeps b ≥ 1e-4
+    bounds = Bounds([0.3*a0, 1e-4], [2.0*a0, 1e3])
+
+    res   = minimize(loss, x0=(a0, b0), bounds=bounds)
+    a,b   = res.x
+    rmse  = np.sqrt(loss((a,b))/len(x))
+    return a,b,rmse
 
