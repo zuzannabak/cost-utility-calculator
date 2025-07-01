@@ -11,10 +11,13 @@ CURVES = json.load(open(pathlib.Path("data") / "curves.json"))
 st.title("Cost-Utility Calculator (prototype)")
 
 # -----------------------------------------------------------
-# 2. curve selector  (+ RMSE caption)
+# 2. curve selector (+ optional RMSE caption)
 # -----------------------------------------------------------
 curve_name = st.selectbox("Choose learning-curve", list(CURVES))
-st.caption(f"Curve RMSE ≈ {CURVES[curve_name]['rmse']:.3f}")
+
+rmse = CURVES[curve_name].get("rmse")      # returns None if key absent
+if rmse is not None:
+    st.caption(f"Curve RMSE ≈ {rmse:.3f}")
 
 # -----------------------------------------------------------
 # 3. user-controlled costs and total budget
