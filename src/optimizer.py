@@ -20,7 +20,7 @@ def optimize_budget(label_cost: float,
         labels        = lbl_dollars / label_cost
         # gpu_hours reserved for energy-cost extension
         gpu_hours     = gpu_dollars / gpu_cost
-        acc = min(1.0, curve_params["a"] * np.log1p(curve_params["b"] * labels))
+        acc = curve["a"] * (1 - np.exp(-curve["b"] * labels))
 
         if acc > best["accuracy"]:
             best.update({"accuracy": acc,
