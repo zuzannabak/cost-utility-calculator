@@ -49,9 +49,9 @@ jupyter lab
 ```bash
 git clone https://github.com/zuzannabak/cost-utility-calculator.git
 cd cost-utility-calculator
-conda activate cucal          # or your own env
-pip install -r requirements.txt
-
+conda env create -f environment.yml   # or pip install -r requirements.txt
+streamlit run streamlit_app.py
+![UI screenshot](docs/figures/dragut_sim_ui.png)
 
 ## References
 Dragut E. C. et al. (2019) How to Invest My Time: Lessons from Human-in-the-Loop Entity Extraction. KDD.
