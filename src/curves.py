@@ -20,21 +20,19 @@ def log_model(x: np.ndarray, a: float, b: float) -> np.ndarray:
 from scipy.optimize import minimize, Bounds
 
 def fit_log_curve(x, y):
-    x, y = np.asarray(x, float), np.asarray(y, float)
-    
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+
+    # ---------- loss ----------
     def loss(p):
-        a,b = p
-        return np.sum((log_model(x, a, b) - y)**2)
+        a, b = p
+        return np.sum((log_model(x, a, b) - y) ** 2)
 
-    # sensible initial guess
-    a0 = y.max()*1.05          # just above the plateau
-    b0 = 5.0 / (np.mean(x)+1)  # bends the knee around the middle
+    # ---------- optimise ----------
+    a0 = y.max() * 1.05                 # initial a just above plateau
+    b0 = 5.0 / (x.mean() + 1)           # knee near mid-range
+    res = minimize(loss, x0=(a0, b0), bounds=((0, None), (1e-4, 1e3)))
 
-    # hard lower bound keeps b ≥ 1e-4
-    bounds = Bounds([0.3*a0, 1e-4], [2.0*a0, 1e3])
-
-    res   = minimize(loss, x0=(a0, b0), bounds=bounds)
-    a,b   = res.x
-    rmse  = np.sqrt(loss((a,b))/len(x))
-    return a,b,rmse
-
+    a_hat, b_hat = res.x
+    rmse = np.sqrt(loss((a_hat, b_hat)) / len(x))
+    return {"a": float(a_hat), "b": float(b_hat), "rmse": float(rmse)}
