@@ -27,5 +27,5 @@ def fit_log_curve(x, y):
     a, b = map(float, res.x)        # ← ensure native Python floats
 
     rmse = float(np.sqrt(np.mean((log_model(x, a, b) - y)**2)))
-    return a, b, rmse
+    return {"a": float(a), "b": float(b), "rmse": float(rmse)}
 

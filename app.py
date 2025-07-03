@@ -40,9 +40,10 @@ result = optimize_budget(label_cost, gpu_cost, budget, params)
 # -----------------------------------------------------------
 # 5. outputs
 # -----------------------------------------------------------
-st.metric("Expected F1 / Accuracy", f"{result['accuracy']:.3f}")
-
-st.markdown(
-    f"Allocate **${result['labels']}** to labels and "
-    f"**${result['gpu']}** to GPU hours."
-)
+if result and all(k in result for k in ['accuracy', 'labels', 'gpu']):
+    st.metric("Expected F1 / Accuracy", f"{result['accuracy']:.3f}")
+    st.markdown(
+        f"Allocate **{int(result['labels'])} to labels and {int(result['gpu'])} to GPU hours**."
+    )
+else:
+    st.error("Optimization failed or returned incomplete results.")
