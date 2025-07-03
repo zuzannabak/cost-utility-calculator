@@ -18,11 +18,15 @@ jobs:
 
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
+        
 
       - name: Install runtime + dev dependencies
         run: |
-          pip install -r requirements.txt   # scipy, streamlit, etc.
-          pip install -e .                  # ⬅️  makes `src` importable
+          pip install --upgrade pip
+          pip install -r requirements.txt          # runtime (scipy, streamlit …)
+          pip install flake8 black isort pytest    # dev / QA tools
+          pip install -e .                         # make `src` importablepip install -r requirements.txt   
+
 
       # ------- quality gates ----------
       - name: Lint
