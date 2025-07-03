@@ -5,6 +5,7 @@ Utility functions for cost-utility calculator
 
 from typing import List, Tuple
 
+
 def parse_curve(cell: str) -> list[tuple[float, float]]:
     """
     '0:0.58;30:0.72'  →  [(0.0, 0.58), (30.0, 0.72)]
@@ -27,5 +28,6 @@ def marginal_gain(x: List[float], y: List[float]) -> List[Tuple[float, float]]:
     """
     Return (x_i, Δy/Δx) after each segment.
     """
-    return [(x[i + 1], (y[i + 1] - y[i]) / (x[i + 1] - x[i]))
-            for i in range(len(x) - 1)]
+    return [
+        (x[i + 1], (y[i + 1] - y[i]) / (x[i + 1] - x[i])) for i in range(len(x) - 1)
+    ]
