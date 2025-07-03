@@ -5,20 +5,22 @@ Utility functions for cost-utility calculator
 
 from typing import List, Tuple
 
-def parse_curve(cell: str) -> List[Tuple[float, float]]:
+def parse_curve(cell: str) -> list[tuple[float, float]]:
     """
-    Convert a semicolon-separated string of 'x:y' pairs to a list of tuples.
-
-    Example
-    -------
-    '0:0.58;30:0.72' -> [(0, 0.58), (30, 0.72)]
+    '0:0.58;30:0.72'  →  [(0.0, 0.58), (30.0, 0.72)]
+    Ignores empty segments and strips whitespace.
     """
-    pts = []
+    pairs = []
     for pair in str(cell).split(";"):
-        if pair:
-            x_str, y_str = pair.split(":")
-            pts.append((float(x_str), float(y_str)))
-    return pts
+        if not pair.strip():
+            continue
+        x_str, y_str = pair.split(":")
+        try:
+            pairs.append((float(x_str.strip()), float(y_str.strip())))
+        except ValueError:
+            # Skip malformed points instead of returning strings
+            continue
+    return pairs
 
 
 def marginal_gain(x: List[float], y: List[float]) -> List[Tuple[float, float]]:
