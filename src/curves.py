@@ -11,21 +11,21 @@ from typing import List, Tuple
 import numpy as np
 from scipy.optimize import minimize
 
-
+# keep log_model at top
 def log_model(x: np.ndarray, a: float, b: float) -> np.ndarray:
     """Vectorised log curve."""
-    return a * np.log1p(b * x)          # log1p is numerically safer
+    return a * np.log1p(b * x)   # log1p = log(1+x)
 
-
-from scipy.optimize import minimize, Bounds
+from sklearn.metrics import mean_squared_error  # after top-level imports
 
 def fit_log_curve(x, y):
-    x, y = np.asarray(x, float), np.asarray(y, float)
+    """Return dict with a, b, rmse."""
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
 
-    res = minimize(lambda p: np.sum((log_model(x, *p) - y)**2),
-                   x0=(1.0, 0.01), bounds=((0,None),(0,None)))
-    a, b = map(float, res.x)        # ← ensure native Python floats
-
-    rmse = float(np.sqrt(np.mean((log_model(x, a, b) - y)**2)))
-    return {"a": float(a), "b": float(b), "rmse": float(rmse)}
-
+    res = minimize(lambda p: np.sum((log_model(x, *p) - y) ** 2),
+                   x0=(1.0, 0.01),
+                   bounds=((0, None), (0, None)))
+    a, b = res.x
+    rmse = mean_squared_error(y, log_model(x, a, b), squared=False)
+    return {"a": a, "b": b, "rmse": rmse}
