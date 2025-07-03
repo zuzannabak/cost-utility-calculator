@@ -1,34 +1,32 @@
 # .github/workflows/ci.yml
 name: CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest flake8
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
 
-      - name: Run unit tests
+      - name: Install runtime + dev dependencies
+        run: |
+          pip install -r requirements.txt   # scipy, streamlit, etc.
+          pip install -e .                  # ⬅️  makes `src` importable
+
+      # ------- quality gates ----------
+      - name: Lint
+        run: flake8 src tests --max-line-length 100
+
+      - name: Test
         run: pytest -q
-
-      - name: Lint with flake8
-        run: |
-          flake8 src tests --max-line-length 100
