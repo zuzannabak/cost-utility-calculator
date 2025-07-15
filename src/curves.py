@@ -11,7 +11,7 @@ import numpy as np
 from scipy.optimize import minimize
 import json
 from pathlib import Path
-
+from typing import Tuple
 
 def log_model(x: np.ndarray, a: float, b: float) -> np.ndarray:
     """Vectorised log curve."""
@@ -31,7 +31,10 @@ def fit_log_curve(x, y):
     rmse = float(np.sqrt(np.mean((log_model(x, a, b) - y) ** 2)))
     return {"a": float(a), "b": float(b), "rmse": float(rmse)}
 
-_CURVES = json.loads(Path(__file__).with_suffix("").with_name("data/curves.json").read_text())
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent     # …/cost-utility-calculator
+_CURVES = json.loads((_PROJECT_ROOT / "data" / "curves.json").read_text())
+
+
 
 def get_curves(task: str) -> Tuple[dict, dict]:
     """Return (label_curve, gpu_curve) for a given task name."""
