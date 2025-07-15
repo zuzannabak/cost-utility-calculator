@@ -9,6 +9,8 @@ Returns (a, b, r2).
 
 import numpy as np
 from scipy.optimize import minimize
+import json
+from pathlib import Path
 
 
 def log_model(x: np.ndarray, a: float, b: float) -> np.ndarray:
@@ -28,3 +30,10 @@ def fit_log_curve(x, y):
 
     rmse = float(np.sqrt(np.mean((log_model(x, a, b) - y) ** 2)))
     return {"a": float(a), "b": float(b), "rmse": float(rmse)}
+
+_CURVES = json.loads(Path(__file__).with_suffix("").with_name("data/curves.json").read_text())
+
+def get_curves(task: str) -> Tuple[dict, dict]:
+    """Return (label_curve, gpu_curve) for a given task name."""
+    d = _CURVES[task]
+    return d["label_curve"], d["gpu_curve"]

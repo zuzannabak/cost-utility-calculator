@@ -53,6 +53,10 @@ conda env create -f environment.yml   # or pip install -r requirements.txt
 streamlit run streamlit_app.py
 ![UI screenshot](docs/figures/dragut_sim_ui.png)
 
+python -m cost_utility_calculator --task dragut_2019 \
+  --label-cost 0.07 --gpu-cost 1.50 --budget 3000 --max-gpu-hours 800
+
+
 ## References
 Dragut E. C. et al. (2019) How to Invest My Time: Lessons from Human-in-the-Loop Entity Extraction. KDD.
 
