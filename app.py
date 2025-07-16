@@ -47,9 +47,14 @@ if res is None:
     st.warning("⚠️ No feasible allocation. Increase budget or relax GPU-hour cap.")
 else:
     st.metric("Expected accuracy", f"{res['accuracy']:.3f}")
-    st.write(
-        f"Label **{res['labels']:.0f}** examples "
-        f"(${res['label_dollars']:.0f}) — "
-        f"train **{res['gpu_hours']:.1f} h** "
-        f"(${res['gpu_dollars']:.0f})"
-        )
+    st.markdown(
+        f"""
+        <div style='background-color:#222;padding:1em;border-radius:8px;'>
+        <ul style='list-style-type:none;padding-left:0;'>
+          <li> <b>Label:</b> <span style='font-size:1.2em;'>{res['labels']:.0f}</span> examples <span style='color:#888;'>(${res['label_dollars']:.0f} USD)</span></li>
+          <li> <b>Train:</b> <span style='font-size:1.2em;'>{res['gpu_hours']:.1f}</span> GPU hours <span style='color:#888;'>(${res['gpu_dollars']:.0f} USD)</span></li>
+        </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
