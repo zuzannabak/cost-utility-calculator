@@ -20,13 +20,12 @@ jobs:
         run: python -m pip install --upgrade pip
         
 
+   
       - name: Install runtime + dev dependencies
         run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt          # runtime (scipy, streamlit …)
-          pip install -r requirements-dev.txt  # dev (pytest, flake8, mypy, …)
-          pip install -e .                         # make `src` importablepip install -r requirements.txt   
-
+          pip install -r requirements.txt                  # runtime (scipy, streamlit …)
+          pip install -r requirements_dev.txt              # dev (pytest, flake8, mypy, …)
+          pip install -e .                                 # make src importable
 
       # ------- quality gates ----------
       - name: Lint
