@@ -24,7 +24,7 @@ jobs:
       - name: Install runtime + dev dependencies
         run: |
           pip install -r requirements.txt                  # runtime (scipy, streamlit …)
-          pip install -r requirements_dev.txt              # dev (pytest, flake8, mypy, …)
+          pip install -r requirements-dev.txt              # dev (pytest, flake8, mypy, …)
           pip install -e .                                 # make src importable
 
       # ------- quality gates ----------
