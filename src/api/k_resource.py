@@ -1,5 +1,8 @@
 from typing import Sequence, Mapping
 
+from typing import Sequence, Mapping
+
+
 def unit_costs(resource_ids: Sequence[str]) -> Mapping[str, float]:
     """
     Temporary stub that returns a fake price for each resource.
