@@ -3,6 +3,15 @@ Exhaustive search for the best split between labelling dollars
 and GPU-compute dollars under a total-budget (and optional GPU-hour) cap.
 """
 
+from __future__ import annotations  # if you’re on Python < 3.11
+
+from collections.abc import Sequence
+from dataclasses import dataclass
+
+from typing import Union
+
+from src.api import k_resource
+
 from typing import Dict, Optional
 
 import numpy as np
@@ -30,6 +39,10 @@ def _combine(acc_lbl: float, acc_gpu: float) -> float:
 # ---------------------------------------------------------------------------#
 # Public API                                                                 #
 # ---------------------------------------------------------------------------#
+@dataclass(slots=True)
+class AllocationPlan:
+    per_resource: dict[str, float]  # id → units allocated
+    total_cost: float
 
 
 def optimise_budget(
@@ -81,8 +94,59 @@ def optimise_budget(
     return best
 
 
+def optimise_allocation(
+    *,
+    demand: float,
+    resource_ids: Union[str, Sequence[str]],
+    capacity_for,  # ← pass a callable so the fn stays generic
+) -> AllocationPlan:
+    """
+    Allocate *demand* units across one or many resources at minimal total cost.
+
+    Parameters
+    ----------
+    demand : float
+        Units required (e.g. GPU-hours, documents, whatever).
+    resource_ids : str | Sequence[str]
+        One ID or an iterable of IDs.
+    capacity_for : Callable[[str], float]
+        User-supplied function that returns the capacity of a given resource ID.
+
+    Returns
+    -------
+    AllocationPlan
+    """
+    # 1  Normalise the input to a list
+    if isinstance(resource_ids, str):
+        resource_ids = [resource_ids]
+
+    # 2  Bulk-fetch unit prices
+    costs = k_resource.unit_costs(resource_ids)  # dict[str, float]
+
+    # 3  Greedy cheapest-first allocation
+    remaining = demand
+    alloc: dict[str, float] = {}
+
+    for rid in sorted(resource_ids, key=costs.get):  # ascending $
+        cap = capacity_for(rid)
+        take = min(remaining, cap)
+        alloc[rid] = take
+        remaining -= take
+        if remaining == 0:
+            break
+
+    if remaining:  # unmet demand
+        raise ValueError(
+            f"Demand ({demand}) exceeds total capacity; {remaining} left unfilled"
+        )
+
+    total_cost = sum(alloc[rid] * costs[rid] for rid in alloc)
+    return AllocationPlan(per_resource=alloc, total_cost=total_cost)
+
+
 # ---------------------------------------------------------------------------#
 # Backwards-compat alias (old notebooks)                                     #
 # ---------------------------------------------------------------------------#
 
 optimize_budget = optimise_budget  # type: ignore
+optimise_k_resource = optimise_allocation  # backwards-compat alias

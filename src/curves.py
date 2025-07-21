@@ -17,7 +17,6 @@ import json
 
 
 def log_model(x: np.ndarray, a: float, b: float) -> np.ndarray:
-
     """Vectorised log curve."""
     return a * np.log1p(b * x)  # log1p is numerically safer
 
@@ -43,7 +42,6 @@ _CURVES = json.loads((_PROJECT_ROOT / "data" / "curves.json").read_text())
 
 
 def get_curves(task: str) -> Tuple[Dict[str, float], Dict[str, float]]:
-
     """
     Return the (label_curve, gpu_curve) pair for *task*.
 
