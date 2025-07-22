@@ -20,4 +20,6 @@ def test_optimise_budget_dragut_smoke() -> None:
 
     assert res is not None, "No feasible allocation returned"
     assert 0.0 < res["accuracy"] <= 1.0
+    ci_lo, ci_hi = res["accuracy_ci"]
+    assert ci_lo <= res["accuracy"] <= ci_hi
     assert res["label_dollars"] + res["gpu_dollars"] == 100

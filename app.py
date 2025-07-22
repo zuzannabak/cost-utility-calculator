@@ -46,7 +46,14 @@ res = optimise_budget(
 if res is None:
     st.warning("⚠️ No feasible allocation. Increase budget or relax GPU-hour cap.")
 else:
-    st.metric("Expected accuracy", f"{res['accuracy']:.3f}")
+    ci = res.get("accuracy_ci", (None, None))
+    lo, hi = (f"{ci[0]:.3f}", f"{ci[1]:.3f}") if None not in ci else ("–", "–")
+
+    st.metric(
+        "Expected accuracy",
+        f"{res['accuracy']:.3f}",
+        help=f"95 % CI: {lo} – {hi}"
+    )
     st.markdown(
         f"""
         <div style='background-color:#222;padding:1em;border-radius:8px;'>

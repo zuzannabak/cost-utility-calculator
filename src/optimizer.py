@@ -83,8 +83,12 @@ def optimise_budget(
         )
 
         if best is None or acc > best["accuracy"]:
+            rmse = curve_label.get("rmse", 0.0)
+            ci_lo = max(0.0, acc - 1.96 * rmse)
+            ci_hi = min(1.0, acc + 1.96 * rmse)
             best = {
                 "accuracy": acc,
+                "accuracy_ci": (ci_lo, ci_hi),
                 "labels": labels,
                 "gpu_hours": gpu_hours,
                 "label_dollars": label_dollars,
@@ -149,4 +153,11 @@ def optimise_allocation(
 # ---------------------------------------------------------------------------#
 
 optimize_budget = optimise_budget  # type: ignore
+
+
+# eksport pól – backwards-compat
+def optimise_budget_ci(*args, **kwargs):
+    return optimise_budget(*args, **kwargs)
+
+
 optimise_k_resource = optimise_allocation  # backwards-compat alias
