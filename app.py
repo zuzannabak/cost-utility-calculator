@@ -6,6 +6,7 @@ from pathlib import Path
 import streamlit as st
 from src.curves import get_curves
 from src.optimizer import optimise_budget
+from src.cucal.hardware import load_hardware, calculate_energy
 
 st.set_page_config(page_title="Cost-Utility Calculator", page_icon="🚀")
 st.title("Cost-Utility Calculator 🚀")
@@ -65,3 +66,31 @@ else:
         """,
         unsafe_allow_html=True
     )
+
+# ---------- ENERGY ----------------------------------------------------------
+st.header("Energy usage")
+
+hardware_db = load_hardware()                  # {'A100': {'power': 400}, ...}
+gpu_names = list(hardware_db.keys())
+
+col1, col2 = st.columns(2)
+with col1:
+    selected_gpu = st.selectbox(
+        "Choose hardware:",
+        gpu_names,
+        index=0,
+        help="Power rating taken from hardware.json",
+    )
+with col2:
+    gpu_hours = st.number_input(
+        "GPU-hours:",
+        min_value=0.0,
+        step=0.25,
+        value=1.0,
+        help="Wall-clock hours × #GPUs",
+    )
+
+if st.button("Compute energy"):
+    power = hardware_db[selected_gpu]["power"]     # [W]
+    energy = calculate_energy(power, gpu_hours)    # [Wh]
+    st.success(f"**Energy used:** {energy:,.0f} Wh")
