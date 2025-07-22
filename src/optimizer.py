@@ -154,8 +154,10 @@ def optimise_allocation(
 
 optimize_budget = optimise_budget  # type: ignore
 
+
 # eksport pól – backwards-compat
 def optimise_budget_ci(*args, **kwargs):
     return optimise_budget(*args, **kwargs)
+
 
 optimise_k_resource = optimise_allocation  # backwards-compat alias

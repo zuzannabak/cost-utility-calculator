@@ -1,6 +1,9 @@
-import json, pathlib, pytest
+import json
+import pathlib
+import pytest
 
 CURVES = json.loads((pathlib.Path("data") / "curves.json").read_text())
+
 
 @pytest.mark.parametrize("task", CURVES.keys())
 def test_schema_keys(task):
