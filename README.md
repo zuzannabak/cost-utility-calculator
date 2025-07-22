@@ -4,6 +4,12 @@ Economic decision-support tool that recommends how to split a fixed budget
 between **knowledge-distillation compute** and **human annotation** when fine-tuning
 compact NLP models.
 
+## Key Features
+- 💸 **Cost/utility optimiser** – chooses the best split of dollars between GPUs and labels.  
+- 📈 **Interactive curves** – visualise marginal utility & diminishing returns.  
+- 🕒 **Time-budget constraint (NEW, Week 4)** – slider lets you cap total wall-clock hours; simulator prunes solutions that exceed it.  
+- 🌳 *Optional* **CO₂ tracker** – estimate carbon for each configuration.
+
 ## Project Goals
 1. Formalise the allocation problem with marginal-utility economics.
 2. Build a lightweight simulation (Python) that takes user-entered costs and
@@ -17,15 +23,47 @@ compact NLP models.
 📁 docs/ – figures, literature-review matrix  
 requirements.txt – Python dependencies
 
+---
+
 ## Quick Start (local)
-```bash
+
 git clone https://github.com/<USER>/cost-utility-calculator.git
 cd cost-utility-calculator
+
+# Conda
 conda create -n cucal python=3.11
 conda activate cucal
 pip install -r requirements.txt
-jupyter lab
-```
+
+# or with plain venv + pip
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+
+### Run the simulator (Streamlit)
+
+streamlit run streamlit_app.py
+
+Then open the browser tab that Streamlit launches and:
+
+  • Move the **Label-Cost ($)** and **GPU-Cost ($)** sliders to match your scenario.  
+  • Set **Budget ($)** and (optionally) **Time Budget (h)**.  
+  • Read off the recommended split and expected utility.
+
+
+### Run from the CLI
+
+python -m cost_utility_calculator \
+  --task dragut_2019 \
+  --label-cost 0.07 \
+  --gpu-cost 1.50 \
+  --budget 3000 \
+  --max-gpu-hours 800 \
+  --wall-clock-limit 72      # cap run-time at 72 h
+
+The script prints the optimal allocation and metadata as JSON.
+
+---
 
 ## Roadmap
  **Week 0** – confirm abstract; register independent study  ✔  
@@ -41,21 +79,6 @@ jupyter lab
 **(Timeline is optimistic; project spans the full 12-week summer term.)**
 
 ---
-
-## Quick Start
-
-1. **Clone and install**
-
-```bash
-git clone https://github.com/zuzannabak/cost-utility-calculator.git
-cd cost-utility-calculator
-conda env create -f environment.yml   # or pip install -r requirements.txt
-streamlit run streamlit_app.py
-![UI screenshot](docs/figures/dragut_sim_ui.png)
-
-python -m cost_utility_calculator --task dragut_2019 \
-  --label-cost 0.07 --gpu-cost 1.50 --budget 3000 --max-gpu-hours 800
-
 
 ## References
 Dragut E. C. et al. (2019) How to Invest My Time: Lessons from Human-in-the-Loop Entity Extraction. KDD.
