@@ -17,7 +17,7 @@ def main() -> None:        # noqa: D401  (simple main wrapper)
     if case == "dragut":
         from pathlib import Path
         # defer import until needed (keeps deps light)
-        script = Path(__file__).resolve().parents[1] / "scripts" / "validate_dragut.py"
+        script = Path("scripts/validate_dragut.py")
         # Forward all flags after the case name
         import runpy
         runpy.run_path(str(script), run_name="__main__")

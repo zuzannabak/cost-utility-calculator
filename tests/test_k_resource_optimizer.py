@@ -1,5 +1,5 @@
 import pytest
-from src.optimizer import optimise_allocation
+from src.cucal.optimizer import optimise_allocation
 
 
 def dummy_capacity(rid: str) -> float:

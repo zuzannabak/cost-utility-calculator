@@ -11,8 +11,8 @@ from __future__ import annotations
 import argparse, json, sys
 from pathlib import Path
 
-from cucal.optimizer import optimise_budget           # <- k-resource API
-from cucal.types import ResourceCurve                 # <- dataclass in src/types.py
+from src.cucal.optimizer import optimise_budget           # <- k-resource API
+from src.cucal.model_types import ResourceCurve                 # <- dataclass in src/types.py
 
 
 # ------------------------- helpers ------------------------- #

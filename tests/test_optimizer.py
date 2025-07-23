@@ -1,6 +1,6 @@
 """Smoke tests for the budget optimiser."""
 
-from src.optimizer import optimise_budget
+from src.cucal.optimizer import optimise_budget
 
 
 def test_optimise_budget_dragut_smoke() -> None:

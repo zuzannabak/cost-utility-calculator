@@ -7,8 +7,8 @@ from pathlib import Path
 
 import streamlit as st
 
-from src.curves import get_curves
-from src.optimizer import optimise_budget
+from src.cucal.curves import get_curves
+from src.cucal.optimizer import optimise_budget
 from src.cucal.hardware import load_hardware, calculate_energy
 
 # -----------------------------  Layout & title  ----------------------------#
