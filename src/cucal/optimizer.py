@@ -9,7 +9,7 @@ and an optional wall-clock-time limit (cluster efficiency taken into account).
 from collections.abc import Sequence, Callable
 from dataclasses import dataclass
 from typing import Dict, Optional, Union
-from cucal.cost_utils import as_hourly
+# from cucal.cost_utils import as_hourly
 
 import numpy as np
 from src.api import k_resource  # external dependency
