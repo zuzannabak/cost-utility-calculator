@@ -1,4 +1,4 @@
-from src.cucal.hardware import calculate_energy
+from cucal..hardware import calculate_energy
 
 
 def test_calculate_energy():

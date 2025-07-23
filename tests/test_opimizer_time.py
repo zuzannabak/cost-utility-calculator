@@ -1,4 +1,4 @@
-from src.cucal.optimizer import optimise_budget
+from cucal..optimizer import optimise_budget
 
 DUMMY = {"a": 1.0, "b": 0.001, "rmse": 0.0}
 
