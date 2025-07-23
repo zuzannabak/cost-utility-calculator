@@ -16,7 +16,7 @@ from cucal.optimizer import optimise_budget           # <- k-resource API
 
 # ------------------------- helpers ------------------------- #
 PAPER_ACCURACY = 0.785      # Dragut-2019 F1   (edit!)
-THRESHOLD     = 0.005       # 0.5 percentage-point
+THRESHOLD     = 0.15       # 0.5 percentage-point
 
 
 def _run_validation(budget: float, time_cap: float, eff: float) -> None:

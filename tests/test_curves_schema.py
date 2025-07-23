@@ -11,9 +11,14 @@ def test_schema_keys(task):
     has_label = "label_curve" in entry
     has_gpu = "gpu_curve" in entry
     # every resource must expose exactly one curve kind
-    assert has_label ^ has_gpu, f"{task} should contain *either* label_curve *or* gpu_curve"
-    assert "a" in entry["label_curve"] and "b" in entry["label_curve"]
-    assert "a" in entry["gpu_curve"] and "b" in entry["gpu_curve"]
-    # rmse optional for GenericNLP, ale musi być float jeżeli jest
+    # every resource must expose **exactly one** curve kind
+    assert has_label ^ has_gpu, (
+        f"{task} should contain *either* label_curve *or* gpu_curve"
+    )
+
+    curve_key = "label_curve" if has_label else "gpu_curve"
+    assert "a" in entry[curve_key] and "b" in entry[curve_key]
+
+    # rmse is optional but must be a float when presentif "rmse" in entry:
     if "rmse" in entry:
         assert isinstance(entry["rmse"], float)
