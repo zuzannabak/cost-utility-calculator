@@ -1,10 +1,10 @@
+
+from __future__ import annotations
 """
 Exhaustive search for the best split between labelling dollars
 and GPU-compute dollars under a total-budget cap, an optional GPU-hour cap,
 and an optional wall-clock-time limit (cluster efficiency taken into account).
 """
-
-from __future__ import annotations  # if you’re on Python < 3.11
 
 from collections.abc import Sequence, Callable
 from dataclasses import dataclass
@@ -149,6 +149,7 @@ def optimise_allocation(
     -------
     AllocationPlan
     """
+    
     if isinstance(resource_ids, str):
         resource_ids = [resource_ids]
 

@@ -12,7 +12,6 @@ from scipy.optimize import minimize
 from pathlib import Path
 from typing import Tuple, Dict
 
-
 import json
 
 
@@ -37,7 +36,7 @@ def fit_log_curve(x, y):
     return {"a": float(a), "b": float(b), "rmse": float(rmse)}
 
 
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 _CURVES = json.loads((_PROJECT_ROOT / "data" / "curves.json").read_text())
 
 

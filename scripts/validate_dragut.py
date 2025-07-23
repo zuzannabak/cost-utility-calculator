@@ -41,25 +41,38 @@ def _load_dragut_curves(curves_path: Path) -> list[ResourceCurve]:
 def _run_validation(budget: float, time_cap: float, eff: float) -> None:
     root = Path(__file__).resolve().parents[1]        # repo root
     curves_path = root / "data" / "curves.json"
-    resources   = _load_dragut_curves(curves_path)
+    with curves_path.open() as f:
+        curves = json.load(f)
 
-    result      = optimise_budget(
-        resources,
-        total_budget=budget,
-        time_cap=time_cap,
-        efficiency=eff,
+    dragut = curves.get("Dragut2019")
+    if not dragut:
+        raise ValueError("Dragut2019 entry not found in curves.json")
+
+    label_curve = dragut.get("label_curve")
+    gpu_curve = dragut.get("gpu_curve")
+    label_cost = dragut.get("label_cost", 1.0)  # default to 1.0 if missing
+    gpu_cost = dragut.get("gpu_cost", 1.0)      # default to 1.0 if missing
+
+    result = optimise_budget(
+        label_cost=label_cost,
+        gpu_cost=gpu_cost,
+        budget=budget,
+        curve_label=label_curve,
+        curve_gpu=gpu_curve,
+        wall_clock_limit_hours=time_cap,
+        cluster_efficiency_pct=eff * 100,  # convert 0-1 to percent
     )
 
     sim_acc = result["accuracy"]
-    delta   = abs(sim_acc - PAPER_ACCURACY)
+    delta = abs(sim_acc - PAPER_ACCURACY)
 
     print("\nDragut-2019 validation\n" + "-"*28)
     print(f"Paper accuracy : {PAPER_ACCURACY:.3f}")
     print(f"Simulator acc. : {sim_acc:.3f}")
-    print(f"Δ accuracy     : {delta:.3%}")
+    print(f"Delta accuracy     : {delta:.3%}")
     print("\nRecommended split ($):")
-    for k, v in result["split"].items():
-        print(f"  {k:<15} {v:8.2f}")
+    print(f"  label_dollars   {result['label_dollars']:8.2f}")
+    print(f"  gpu_dollars     {result['gpu_dollars']:8.2f}")
 
     # hard assertion for CI
     assert delta < THRESHOLD, (

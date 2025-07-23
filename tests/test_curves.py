@@ -4,7 +4,7 @@ import sys
 
 import numpy as np
 
-from cucal..curves import fit_log_curve
+from cucal.curves import fit_log_curve
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 

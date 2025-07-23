@@ -1,14 +1,16 @@
 [project]
 name = "cost-utility-calculator"
-version = "0.1.0"
-dependencies = [
-    "numpy",
-    "scipy",
-]
+version = "0.4.0"
+requires-python = ">=3.9"
+dependencies = ["numpy", "scipy"]
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ["src"]        # <<< tells Python “src” is a top-level package
+[tool.setuptools]                       # <<< fix starts here
+package-dir = {"" = "src"}              # look for packages under src/
+packages = ["cucal", "api"]             # list the real package names
+# -- OR, if you prefer automatic discovery --
+# [tool.setuptools.packages.find]
+# where = ["src"]
