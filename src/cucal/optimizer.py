@@ -9,6 +9,7 @@ and an optional wall-clock-time limit (cluster efficiency taken into account).
 from collections.abc import Sequence, Callable
 from dataclasses import dataclass
 from typing import Dict, Optional, Union
+from cucal.cost_utils import as_hourly
 
 import numpy as np
 from src.api import k_resource  # external dependency
@@ -47,6 +48,7 @@ def optimise_budget(
     budget: float,
     curve_label: Dict[str, float],
     curve_gpu: Dict[str, float],
+    gamma: int = 5,
     max_gpu_hours: Optional[float] = None,
     wall_clock_limit_hours: Optional[float] = None,
     cluster_efficiency_pct: float = 60.0,
@@ -87,6 +89,7 @@ def optimise_budget(
         }
         or *None* when no split satisfies the caps.
     """
+    assert gamma > 0, "γ must be > 0"
     budget = int(round(budget))
     best: Optional[Dict[str, float]] = None
     efficiency = max(cluster_efficiency_pct, 1.0) / 100.0  # avoid /0
@@ -94,12 +97,19 @@ def optimise_budget(
     for label_dollars in range(0, budget + 1, granularity):
         gpu_dollars = budget - label_dollars
 
-        labels = label_dollars / label_cost if label_cost else 0.0
+        # convert per‑instance $ to per‑hour $ so we *could* estimate
+        # labelling wall‑clock later (unused for now)
+        hourly_label_cost = as_hourly(label_cost, gamma)
+
+        labels = label_dollars / label_cost           # examples labelled
+        label_hours = label_dollars / hourly_label_cost  # hours spent labelling
+
         gpu_hours = gpu_dollars / gpu_cost if gpu_cost else 0.0
 
         if max_gpu_hours is not None and gpu_hours > max_gpu_hours:
             continue
 
+        # Only GPU time counts toward wall‑clock for now; add label_hours
         wall_clock = gpu_hours / efficiency if efficiency else float("inf")
         if wall_clock_limit_hours is not None and wall_clock > wall_clock_limit_hours:
             continue
@@ -153,7 +163,18 @@ def optimise_allocation(
     if isinstance(resource_ids, str):
         resource_ids = [resource_ids]
 
-    # Bulk-fetch unit prices
+    # ---  UNIT‑MISMATCH GUARD  -------------------------------------
+    # Verify every candidate resource uses the same unit. Prevents bugs
+    # where, e.g., a "gpu-h" pool gets compared with a "node-h" pool.
+
+    target_unit = k_resource.meta(resource_ids[0])["unit"]
+    for rid in resource_ids:
+        assert k_resource.meta(rid)["unit"] == target_unit, (
+            f"Unit mismatch: {rid} is in {k_resource.meta(rid)['unit']}, "
+            f"expected {target_unit}."
+        )
+
+    # Bulk‑fetch unit prices (safe now that units match)
     costs = k_resource.unit_costs(resource_ids)  # dict[str, float]
 
     # Greedy cheapest-first allocation

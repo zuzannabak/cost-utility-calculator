@@ -62,6 +62,12 @@ if gpu_cap == 0:
     gpu_cap = None
 
 # -----------------------  New time-budget controls  ------------------------#
+# ‑‑‑ γ throughput slider ‑‑‑
+gamma = st.number_input(
+    "γ (inst/h)",  min_value=1, max_value=50, value=5, step=1,
+    help="Throughput: how many instances you can label per hour."
+)
+
 st.subheader("⏱ Time constraints")
 col5, col6 = st.columns(2)
 with col5:
@@ -95,6 +101,7 @@ res = optimise_budget(
     max_gpu_hours=gpu_cap,
     wall_clock_limit_hours=wall_limit,
     cluster_efficiency_pct=efficiency_pct,
+    gamma=gamma,
 )
 
 # ---------------------------  Display results  ----------------------------#

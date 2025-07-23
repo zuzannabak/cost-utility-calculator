@@ -1,0 +1,5 @@
+[
+  {"name": "labeling",    "unit": "inst",   "cost_per_unit": 0.20},
+  {"name": "gpu_compute", "unit": "gpu-h", "cost_per_unit": 1.80},
+  {"name": "tool_build",  "unit": "dev-h", "cost_per_unit": 45.0}
+]

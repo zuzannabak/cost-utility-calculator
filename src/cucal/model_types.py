@@ -20,3 +20,11 @@ class AllocationPlan:
     per_resource: Dict[str, float]  # id → units
     total_cost: float
     accuracy: float
+
+
+@dataclass(slots=True)
+class Resource:
+    """Cost‑bearing resource in the optimisation model."""
+    name: str
+    unit: str        # "inst", "gpu-h", "dev-h", …
+    cost_per_unit: float
