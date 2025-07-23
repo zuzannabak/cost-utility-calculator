@@ -26,6 +26,8 @@ from scipy.optimize import minimize
 # ---------------------------------------------------------------------------#
 # Log-curve fitting                                                          #
 # ---------------------------------------------------------------------------#
+
+
 def log_model(x: np.ndarray, a: float, b: float) -> np.ndarray:
     """Vectorised log curve  y = a · log(1 + b·x)."""
     return a * np.log1p(b * x)  # log1p is numerically safer for small x
