@@ -5,7 +5,7 @@ per-resource keys (<paper>-label / <paper>-gpu).
 
 • Updates data/curves.json
 • Rewrites any *.py / *.md / *.rst / *.ipynb that refer to old keys
-  (Dragut2019, Stiennon2021, …).
+  (Dragut-2019-label, Stiennon2021-label, …).
 
 Run once from repo root:
 
@@ -65,10 +65,10 @@ else:
 # Part 2: rewrite hard-coded keys in code / docs
 # ---------------------------------------------------------------------
 PATTERNS = {
-    r"Dragut2019[-_]?phone?":      "Dragut-2019-label",
-    r"Dragut2019":                 "Dragut-2019-label",
-    r"Stiennon2021\"":             "Stiennon2021-label\"",
-    r"Stiennon2021\b":             "Stiennon2021-label",
+    r"Dragut-2019-label[-_]?phone?":      "Dragut-2019-label",
+    r"Dragut-2019-label":                 "Dragut-2019-label",
+    r"Stiennon2021-label\"":             "Stiennon2021-label-label\"",
+    r"Stiennon2021-label\b":             "Stiennon2021-label-label",
 }
 
 FILES = list(ROOT.rglob("*.py")) + \

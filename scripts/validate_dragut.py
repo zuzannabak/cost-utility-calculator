@@ -11,8 +11,7 @@ from __future__ import annotations
 import argparse, json, sys
 from pathlib import Path
 
-from src.cucal.optimizer import optimise_budget           # <- k-resource API
-from src.cucal.model_types import ResourceCurve                 # <- dataclass in src/types.py
+from cucal.optimizer import optimise_budget           # <- k-resource API
 
 
 # ------------------------- helpers ------------------------- #
@@ -20,51 +19,25 @@ PAPER_ACCURACY = 0.785      # Dragut-2019 F1   (edit!)
 THRESHOLD     = 0.005       # 0.5 percentage-point
 
 
-def _load_dragut_curves(curves_path: Path) -> list[ResourceCurve]:
-    with curves_path.open() as f:
-        curves = json.load(f)
-
-    curves_for_dragut = []
-    for name, entry in curves.items():
-        if name.startswith("Dragut-2019"):
-            curves_for_dragut.append(
-                ResourceCurve(
-                    name=name,
-                    curve=entry["label_curve"],         # ← your schema
-                    cost_per_unit=entry["cost_per_unit"],
-                    max_units=entry.get("max_units"),
-                )
-            )
-    return curves_for_dragut
-
-
 def _run_validation(budget: float, time_cap: float, eff: float) -> None:
-    root = Path(__file__).resolve().parents[1]        # repo root
-    curves_path = root / "data" / "curves.json"
-    with curves_path.open() as f:
-        curves = json.load(f)
+    root = Path(__file__).resolve().parents[1]          # repo root
+    curves = json.loads((root / "data" / "curves.json").read_text())
 
-    dragut = curves.get("Dragut2019")
-    if not dragut:
-        raise ValueError("Dragut2019 entry not found in curves.json")
-
-    label_curve = dragut.get("label_curve")
-    gpu_curve = dragut.get("gpu_curve")
-    label_cost = dragut.get("label_cost", 1.0)  # default to 1.0 if missing
-    gpu_cost = dragut.get("gpu_cost", 1.0)      # default to 1.0 if missing
+    label_entry = curves["Dragut-2019-label"]
+    gpu_entry   = curves["Dragut-2019-gpu"]
 
     result = optimise_budget(
-        label_cost=label_cost,
-        gpu_cost=gpu_cost,
+        label_cost=label_entry["cost_per_unit"],
+        gpu_cost=gpu_entry["cost_per_unit"],
         budget=budget,
-        curve_label=label_curve,
-        curve_gpu=gpu_curve,
+        curve_label=label_entry["label_curve"],
+        curve_gpu=gpu_entry["gpu_curve"],
         wall_clock_limit_hours=time_cap,
-        cluster_efficiency_pct=eff * 100,  # convert 0-1 to percent
+        cluster_efficiency_pct=eff * 100,
     )
 
     sim_acc = result["accuracy"]
-    delta = abs(sim_acc - PAPER_ACCURACY)
+    delta   = abs(sim_acc - PAPER_ACCURACY)
 
     print("\nDragut-2019 validation\n" + "-"*28)
     print(f"Paper accuracy : {PAPER_ACCURACY:.3f}")
@@ -76,7 +49,7 @@ def _run_validation(budget: float, time_cap: float, eff: float) -> None:
 
     # hard assertion for CI
     assert delta < THRESHOLD, (
-        f"Validation failed: Δ accuracy {delta:.3%} exceeds {THRESHOLD:.3%}"
+        f"Validation failed: Delta {delta:.3%} exceeds {THRESHOLD:.3%}"
     )
 
 

@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
 CLI wrapper for optimize_budget.
-Usage: python sim.py Dragut2019 100
+Usage: python sim.py Dragut-2019-label 100
 """
 import json, argparse, pathlib, sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent / "src"))
 
-from optimizer import optimize_budget
+from cucal.optimizer import optimize_budget
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("curve",  help="Name in curves.json (Dragut2019, Kang2023, …)")
+    ap.add_argument("curve",  help="Name in curves.json (Dragut-2019-label, Kang2023, …)")
     ap.add_argument("budget", type=float, help="Total $ budget")
     ap.add_argument("--label_cost", type=float, default=0.10)
     ap.add_argument("--gpu_cost",   type=float, default=3.0)
