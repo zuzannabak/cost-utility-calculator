@@ -6,6 +6,7 @@ __all__ = [
     "as_hourly",
 ]
 
+
 def as_hourly(cost: Union[int, float], inst_per_hour: int = 5) -> float:
     """Convert a *per‑instance* cost into an hourly cost.
 
@@ -21,4 +22,5 @@ def as_hourly(cost: Union[int, float], inst_per_hour: int = 5) -> float:
     float
         Equivalent $/hour.
     """
+    
     return float(cost) * inst_per_hour

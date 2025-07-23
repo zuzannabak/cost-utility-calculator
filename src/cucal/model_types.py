@@ -28,3 +28,4 @@ class Resource:
     name: str
     unit: str        # "inst", "gpu-h", "dev-h", …
     cost_per_unit: float
+    

@@ -102,7 +102,7 @@ def optimise_budget(
         hourly_label_cost = as_hourly(label_cost, gamma)
 
         labels = label_dollars / label_cost           # examples labelled
-        label_hours = label_dollars / hourly_label_cost  # hours spent labelling
+        # label_hours = label_dollars / hourly_label_cost  # hours spent labelling
 
         gpu_hours = gpu_dollars / gpu_cost if gpu_cost else 0.0
 
