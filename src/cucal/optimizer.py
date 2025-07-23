@@ -99,7 +99,7 @@ def optimise_budget(
 
         # convert per‑instance $ to per‑hour $ so we *could* estimate
         # labelling wall‑clock later (unused for now)
-        hourly_label_cost = as_hourly(label_cost, gamma)
+        # hourly_label_cost = as_hourly(label_cost, gamma)
 
         labels = label_dollars / label_cost           # examples labelled
         # label_hours = label_dollars / hourly_label_cost  # hours spent labelling
