@@ -149,7 +149,7 @@ def optimise_allocation(
     -------
     AllocationPlan
     """
-    
+
     if isinstance(resource_ids, str):
         resource_ids = [resource_ids]
 

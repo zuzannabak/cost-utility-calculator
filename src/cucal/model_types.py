@@ -10,9 +10,9 @@ class ResourceCurve:
     One cost/accuracy curve for a given resource (dataset, GPU, etc.)
     """
     name: str
-    curve: Dict[str, float]         # e.g. {"a": 0.72, "b": -0.03}
-    cost_per_unit: float            # $ per label or GPU-hour
-    max_units: Optional[int] = None # cap (None → unlimited)
+    curve: Dict[str, float]          # e.g. {"a": 0.72, "b": -0.03}
+    cost_per_unit: float             # $ per label or GPU-hour
+    max_units: Optional[int] = None  # cap (None → unlimited)
 
 
 @dataclass(slots=True)

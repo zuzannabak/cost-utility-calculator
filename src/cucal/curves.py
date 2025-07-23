@@ -47,7 +47,7 @@ def get_curves(task: str) -> Tuple[Dict[str, float], Dict[str, float]]:
     Parameters
     ----------
     task : str
-        Key inside curves.json (e.g. "Dragut2019").
+        Key inside curves.json (e.g. "Dragut-2019-label").
 
     Raises
     ------

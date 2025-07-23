@@ -1,4 +1,6 @@
-import subprocess, sys, textwrap, pathlib
+import subprocess
+import sys
+
 
 def test_validation_dragut_passes(tmp_path):
     """
