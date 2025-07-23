@@ -7,59 +7,68 @@ from pathlib import Path
 
 import streamlit as st
 
-from cucal.curves import get_curves
-from cucal.optimizer import optimise_budget
-from cucal.hardware import load_hardware, calculate_energy
-from cucal.config import DEFAULT_CLUSTER_EFF
+from src.cucal.curves import get_curves
+from src.cucal.optimizer import optimise_budget
+from src.cucal.hardware import load_hardware, calculate_energy
+from src.cucal.config import DEFAULT_CLUSTER_EFF
 
 # -----------------------------  Layout & title  ----------------------------#
 st.set_page_config(page_title="Cost-Utility Calculator", page_icon="🚀")
 st.title("Cost-Utility Calculator 🚀")
 
 # -------------------------  Case-study selection  -------------------------#
-META  = json.loads((Path("data") / "curves.json").read_text())
+META = json.loads((Path("data") / "curves.json").read_text())
 BASES = sorted({k.rsplit("-", 1)[0] for k in META})
-task  = st.selectbox("Choose case study", BASES)
+task = st.selectbox("Choose case study", BASES)
 
 # show RMSE for the *label* curve (if present)
 rmse_entry = META.get(f"{task}-label", {}) or META.get(f"{task}-gpu", {})
-if (rmse := rmse_entry.get("rmse")):
-    st.caption(f"Curve RMSE ≈ {rmse:.3f}")
+rmse_value = rmse_entry.get("rmse", 0.02)
+if rmse_entry.get("rmse") is not None:
+    st.caption(f"Curve RMSE ≈ {rmse_value:.3f}")
 
-# -----------------------------  Input controls  -----------------------------#
+# -----------------------------  Input controls  ----------------------------#
 c1, c2, c3, c4 = st.columns(4)
+
 with c1:
     label_cost_hour = st.number_input("Labels $/h", min_value=0.0, value=8.0)
     gamma = st.slider("γ (instances / hour)", 1, 30, 20)
-    label_cost_instance = label_cost_hour / gamma   # ← **per-instance**
+    # Convert to per-instance cost for the optimiser
+    label_cost_instance = label_cost_hour / gamma if gamma > 0 else 0.0
 
 with c2:
     gpu_cost = st.number_input("GPU $/h", 0.10, value=3.00, step=0.10)
+
 with c3:
     budget = st.number_input("Total budget ($)", 1.0, value=100.0, step=1.0)
+
 mode = st.radio(
     "Objective",
     ["Maximise accuracy", "Hit accuracy target ↗"],
     horizontal=True,
 )
+
 target_acc = None
 if mode == "Hit accuracy target ↗":
     target_acc = st.number_input("Desired accuracy (0–1)", 0.50, 1.00, 0.90, 0.005)
-else:
-    target_acc = None   # explicit is better than implicit
+
 with c4:
     gpu_cap = st.number_input(
         "Max GPU-hours",
-        min_value=0.0, value=0.0, step=1.0, help="0 = no limit"
+        min_value=0.0,
+        value=0.0,
+        step=1.0,
+        help="0 = no limit",
     )
 gpu_cap = None if gpu_cap == 0 else gpu_cap
 
-
 st.subheader("⏱ Time constraints")
 col5, col6 = st.columns(2)
+
 with col5:
     wall_limit = st.slider("Time budget (h)", 0, 168, 0, 1, help="0 = no limit")
     wall_limit = None if wall_limit == 0 else float(wall_limit)
+
 with col6:
     efficiency_pct = st.slider(
         "Cluster efficiency (%)", 10, 100, int(100 * DEFAULT_CLUSTER_EFF), 1
@@ -68,43 +77,42 @@ with col6:
 # ---------------------------  Run optimisation  ---------------------------#
 curve_lbl, curve_gpu = get_curves(task)
 
-rmse_entry = META.get(f"{task}-label", {}) or META.get(f"{task}-gpu", {})
-
 res = optimise_budget(
     label_cost=label_cost_instance,
     gpu_cost=gpu_cost,
     budget=budget,
     curve_label=curve_lbl,
     curve_gpu=curve_gpu,
-    gamma=gamma,
+    curve_rmse=rmse_value,  # task-level RMSE for error bars
     max_gpu_hours=gpu_cap,
     wall_clock_limit_hours=wall_limit,
     cluster_efficiency_pct=efficiency_pct,
-    label_rmse=rmse_entry.get("rmse", 0.0),
-    target_accuracy = target_acc,
 )
 
 # ---------------------------  Display results  ----------------------------#
 if res is None:
-    if target_acc is not None:
-        st.warning(
-            f"⚠️  Budget ${budget:.0f} cannot reach accuracy ≥ {target_acc:.3f}. "
-            "Raise the budget or lower the accuracy target."
-        )
-        st.stop()
-    else:
-        st.warning("⚠️  No feasible allocation. Increase budget or relax caps.")
-else:
-    # --- define label_hours so we can show it -----------------------------
-    label_hours = res["labels"] / gamma
-    lo, hi = res["accuracy_ci"]
-    ci_txt = f"95 % CI: {lo:.4f} – {hi:.4f}"
-    if target_acc is None:
-        st.metric("Expected accuracy", f"{res['accuracy']:.3f}", help=ci_txt)
-    else:
-        st.metric("Total cost to reach target", f"${res['label_dollars']+res['gpu_dollars']:.0f}")
+    st.warning("⚠️  No feasible allocation. Increase budget or relax caps.")
+    st.stop()
 
-label_hours = res["labels"] / gamma
+label_hours = res["labels"] / gamma if gamma > 0 else 0.0
+mean = res["accuracy"]
+std = res["accuracy_std"]
+lo, hi = res["accuracy_ci"]
+
+# If user set a target, tell them whether we reach it
+if target_acc is not None and mean < target_acc:
+    st.warning(
+        f"⚠️  With budget ${budget:.0f}, best achievable accuracy is "
+        f"{mean:.3f}, below the target {target_acc:.3f}."
+    )
+
+st.metric(
+    "Expected accuracy",
+    f"{mean:.3f}",
+    delta=f"±{std:.3f}",
+    delta_color="off",
+    help=f"95 % CI: {lo:.3f} – {hi:.3f}",
+)
 
 st.markdown(
     f"""
@@ -124,7 +132,6 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
-
 
 st.download_button(
     "📋 Copy plan as JSON",
@@ -149,13 +156,14 @@ gpu_names = list(hardware_db.keys())
 col7, col8 = st.columns(2)
 with col7:
     selected_gpu = st.selectbox(
-        "Choose hardware:", gpu_names, index=0,
+        "Choose hardware:",
+        gpu_names,
+        index=0,
         help="Power rating from hardware.json",
     )
 with col8:
     gpu_hours = st.number_input("GPU-hours:", 0.0, step=0.25, value=1.0)
 
-# ---------- NEW  CO₂ slider ----------------------------------------
 co2_grid = st.slider(
     "Grid carbon intensity (g CO₂ / kWh)",
     min_value=100,
@@ -167,7 +175,8 @@ co2_grid = st.slider(
 if st.button("Compute energy"):
     power = hardware_db[selected_gpu]["power"]  # W
     energy = calculate_energy(power, gpu_hours)  # Wh
-    from cucal.hardware import co2_equivalent
+    from src.cucal.hardware import co2_equivalent
+
     co2 = co2_equivalent(energy, co2_grid)
     st.success(
         f"**Energy:** {energy:,.0f} Wh  |  "
