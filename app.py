@@ -88,6 +88,7 @@ res = optimise_budget(
     budget=budget,
     curve_label=curve_lbl,
     curve_gpu=curve_gpu,
+    curve_rmse=rmse,              # ← NEW  (one scalar per task)
     max_gpu_hours=gpu_cap,
     wall_clock_limit_hours=wall_limit,
     cluster_efficiency_pct=efficiency_pct,
@@ -97,9 +98,17 @@ res = optimise_budget(
 if res is None:
     st.warning("⚠️ No feasible allocation. Increase budget or relax caps.")
 else:
+    mean = res["accuracy"]
+    std  = res["accuracy_std"]
     lo, hi = res["accuracy_ci"]
-    ci_txt = f"95 % CI: {lo:.3f} – {hi:.3f}"
-    st.metric("Expected accuracy", f"{res['accuracy']:.3f}", help=ci_txt)
+
+    st.metric(
+        "Expected accuracy",
+        f"{mean:.3f}",
+        delta=f"±{std:.3f}",
+        delta_color="off",
+        help=f"95 % CI: {lo:.3f} – {hi:.3f}",
+    )
 
     st.markdown(
         f"""
@@ -116,6 +125,7 @@ else:
 """,
         unsafe_allow_html=True,
     )
+
 
 # -------------------------------  ENERGY  ----------------------------------#
 st.header("Energy usage")

@@ -4,20 +4,17 @@ and GPU-compute dollars under a total-budget cap, an optional GPU-hour cap,
 and an optional wall-clock-time limit (cluster efficiency taken into account).
 """
 
-from __future__ import annotations  # if you’re on Python < 3.11
-
 from collections.abc import Sequence, Callable
 from dataclasses import dataclass
 from typing import Dict, Optional, Union
 
 import numpy as np
-from src.api import k_resource  # external dependency
+from src.api import k_resource
+
 
 # ---------------------------------------------------------------------------#
 # Helpers                                                                    #
 # ---------------------------------------------------------------------------#
-
-
 def _eval_curve(a: float, b: float, x: float) -> float:
     """Saturating log curve  a · (1 − e^(−b·x))."""
     return a * (1.0 - np.exp(-b * x))
@@ -47,49 +44,30 @@ def optimise_budget(
     budget: float,
     curve_label: Dict[str, float],
     curve_gpu: Dict[str, float],
+    curve_rmse: float = 0.02,               # NEW  ◀─────────────────────────
     max_gpu_hours: Optional[float] = None,
     wall_clock_limit_hours: Optional[float] = None,
     cluster_efficiency_pct: float = 60.0,
     granularity: int = 1,
 ) -> Optional[Dict[str, float]]:
     """
-    Grid-search the $-space.
+    Grid-search the $-space and return the best feasible split.
 
-    Parameters
-    ----------
-    label_cost : float
-        $ cost per labelled example.
-    gpu_cost : float
-        $ cost per GPU-hour.
-    budget : float
-        Total dollars available.
-    curve_label / curve_gpu : dict
-        Keys {a, b [, rmse]} for the two accuracy curves.
-    max_gpu_hours : float | None
-        Hard cap on GPU hours (wall-clock × #GPUs). None → unlimited.
-    wall_clock_limit_hours : float | None
-        If set, prune any candidate whose estimated wall-clock time
-        ( gpu_hours / (cluster_efficiency_pct/100) )
-        exceeds this limit.
-    cluster_efficiency_pct : float
-        Aggregate utilisation + scheduling efficiency, 10–100 %.
-    granularity : int
-        Dollar step size for the grid search.
-
-    Returns
-    -------
-    dict | None
-        {
-          accuracy, accuracy_ci,
-          labels, gpu_hours,
-          wall_clock_hours,
-          label_dollars, gpu_dollars
-        }
-        or *None* when no split satisfies the caps.
+    Returned dict
+    -------------
+    accuracy          : mean value from the two curves
+    accuracy_std      : 1 σ error (float)
+    accuracy_ci       : (lo, hi) 95 % confidence interval
+    labels            : number of human-labelled examples
+    gpu_hours         : GPU compute hours purchased
+    wall_clock_hours  : gpu_hours ÷ (cluster_efficiency_pct / 100)
+    label_dollars     : dollars spent on annotation
+    gpu_dollars       : dollars spent on compute
     """
     budget = int(round(budget))
     best: Optional[Dict[str, float]] = None
-    efficiency = max(cluster_efficiency_pct, 1.0) / 100.0  # avoid /0
+
+    efficiency = max(cluster_efficiency_pct, 1.0) / 100.0   # guard /0
 
     for label_dollars in range(0, budget + 1, granularity):
         gpu_dollars = budget - label_dollars
@@ -97,30 +75,37 @@ def optimise_budget(
         labels = label_dollars / label_cost if label_cost else 0.0
         gpu_hours = gpu_dollars / gpu_cost if gpu_cost else 0.0
 
+        # 1️⃣  Hard GPU-hour cap
         if max_gpu_hours is not None and gpu_hours > max_gpu_hours:
             continue
 
-        wall_clock = gpu_hours / efficiency if efficiency else float("inf")
+        # 2️⃣  Wall-clock constraint
+        wall_clock = gpu_hours / efficiency
         if wall_clock_limit_hours is not None and wall_clock > wall_clock_limit_hours:
             continue
 
+        # 3️⃣  Accumulate accuracy from the two curves
         acc = _combine(
             _eval_curve(curve_label["a"], curve_label["b"], labels),
-            _eval_curve(curve_gpu["a"], curve_gpu["b"], gpu_hours),
+            _eval_curve(curve_gpu["a"],  curve_gpu["b"],  gpu_hours),
         )
 
+        # 4️⃣  Error model (task-level RMSE → σ)
+        std = max(curve_rmse, 0.02)               # never let σ collapse to 0
+        ci_lo = max(0.0, acc - 1.96 * std)
+        ci_hi = min(1.0, acc + 1.96 * std)
+
+        # 5️⃣  Keep the best solution
         if best is None or acc > best["accuracy"]:
-            rmse = curve_label.get("rmse", 0.0)
-            ci_lo = max(0.0, acc - 1.96 * rmse)
-            ci_hi = min(1.0, acc + 1.96 * rmse)
             best = {
-                "accuracy": acc,
-                "accuracy_ci": (ci_lo, ci_hi),
-                "labels": labels,
-                "gpu_hours": gpu_hours,
+                "accuracy":         acc,
+                "accuracy_std":     std,
+                "accuracy_ci":      (ci_lo, ci_hi),
+                "labels":           labels,
+                "gpu_hours":        gpu_hours,
                 "wall_clock_hours": wall_clock,
-                "label_dollars": label_dollars,
-                "gpu_dollars": gpu_dollars,
+                "label_dollars":    label_dollars,
+                "gpu_dollars":      gpu_dollars,
             }
 
     return best
@@ -133,29 +118,12 @@ def optimise_allocation(
     resource_ids: Union[str, Sequence[str]],
     capacity_for: Callable[[str], float],
 ) -> AllocationPlan:
-    """
-    Allocate *demand* units across one or many resources at minimal total cost.
-
-    Parameters
-    ----------
-    demand : float
-        Units required (e.g. GPU-hours, documents, whatever).
-    resource_ids : str | Sequence[str]
-        One ID or an iterable of IDs.
-    capacity_for : Callable[[str], float]
-        Function returning the capacity of a given resource ID.
-
-    Returns
-    -------
-    AllocationPlan
-    """
+    """Allocate *demand* units across one or many resources at minimal cost."""
     if isinstance(resource_ids, str):
         resource_ids = [resource_ids]
 
-    # Bulk-fetch unit prices
     costs = k_resource.unit_costs(resource_ids)  # dict[str, float]
 
-    # Greedy cheapest-first allocation
     remaining = demand
     alloc: dict[str, float] = {}
 
@@ -167,9 +135,9 @@ def optimise_allocation(
         if remaining == 0:
             break
 
-    if remaining:  # unmet demand
+    if remaining:
         raise ValueError(
-            f"Demand ({demand}) exceeds total capacity; {remaining} left unfilled"
+            f"Demand ({demand}) exceeds total capacity; {remaining} unfilled"
         )
 
     total_cost = sum(alloc[rid] * costs[rid] for rid in alloc)
@@ -177,14 +145,8 @@ def optimise_allocation(
 
 
 # ---------------------------------------------------------------------------#
-# Backwards-compat aliases (notebooks, legacy code)                          #
+# Backwards-compat aliases                                                   #
 # ---------------------------------------------------------------------------#
-
 optimize_budget = optimise_budget  # type: ignore
-
-
-def optimise_budget_ci(*args, **kwargs):
-    return optimise_budget(*args, **kwargs)
-
-
+optimise_budget_ci = optimise_budget
 optimise_k_resource = optimise_allocation
