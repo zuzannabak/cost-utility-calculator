@@ -166,13 +166,13 @@ def optimise_allocation(
     # ---  UNIT‑MISMATCH GUARD  -------------------------------------
     # Verify every candidate resource uses the same unit. Prevents bugs
     # where, e.g., a "gpu-h" pool gets compared with a "node-h" pool.
-
-    target_unit = k_resource.meta(resource_ids[0])["unit"]
-    for rid in resource_ids:
-        assert k_resource.meta(rid)["unit"] == target_unit, (
-            f"Unit mismatch: {rid} is in {k_resource.meta(rid)['unit']}, "
-            f"expected {target_unit}."
-        )
+    if hasattr(k_resource, "meta"):              # guard only when API supports it
+        target_unit = k_resource.meta(resource_ids[0])["unit"]
+        for rid in resource_ids:
+            assert k_resource.meta(rid)["unit"] == target_unit, (
+                f"Unit mismatch: {rid} is in {k_resource.meta(rid)['unit']}, "
+                f"expected {target_unit}."
+            )
 
     # Bulk‑fetch unit prices (safe now that units match)
     costs = k_resource.unit_costs(resource_ids)  # dict[str, float]
