@@ -11,7 +11,6 @@ def test_schema_keys(task):
     has_label = "label_curve" in entry
     has_gpu = "gpu_curve" in entry
     # every resource must expose exactly one curve kind
-    # every resource must expose **exactly one** curve kind
     assert has_label ^ has_gpu, (
         f"{task} should contain *either* label_curve *or* gpu_curve"
     )

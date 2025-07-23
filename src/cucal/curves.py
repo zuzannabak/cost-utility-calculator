@@ -1,27 +1,38 @@
 # ── src/curves.py ────────────────────────────────────────────────────────────
 """
-Fit y = a * log(b * x + 1)     (diminishing returns)
-Returns (a, b, r2).
+Curve utilities for the Cost-Utility Calculator
+-----------------------------------------------
 
-  a : max achievable metric (≈ plateau)
-  b : controls curvature / speed of saturation
+* Fit diminishing-returns log curves  y = a · log1p(b·x)
+* Load per-resource curves from data/curves.json
+* Return paired (label_curve, gpu_curve) for a base task name
+
+Schema assumed in curves.json
+-----------------------------
+<base>-label : { "label_curve": {a, b}, "rmse": …, "cost_per_unit": … }
+<base>-gpu   : { "gpu_curve"  : {a, b}, "rmse": …, "cost_per_unit": … }
 """
 
-import numpy as np
-from scipy.optimize import minimize
+from __future__ import annotations
+
+from functools import lru_cache
 from pathlib import Path
-from typing import Tuple, Dict
+from typing import Dict, Tuple
 
 import json
+import numpy as np
+from scipy.optimize import minimize
 
-
+# ---------------------------------------------------------------------------#
+# Log-curve fitting                                                          #
+# ---------------------------------------------------------------------------#
 def log_model(x: np.ndarray, a: float, b: float) -> np.ndarray:
-    """Vectorised log curve."""
-    return a * np.log1p(b * x)  # log1p is numerically safer
+    """Vectorised log curve  y = a · log(1 + b·x)."""
+    return a * np.log1p(b * x)  # log1p is numerically safer for small x
 
 
-def fit_log_curve(x, y):
-
+def fit_log_curve(x, y) -> Dict[str, float]:
+    """Return {'a':…, 'b':…, 'rmse':…} fitted to (x, y) numpy-like arrays."""
     x, y = np.asarray(x, float), np.asarray(y, float)
 
     res = minimize(
@@ -29,30 +40,61 @@ def fit_log_curve(x, y):
         x0=(1.0, 0.01),
         bounds=((0, None), (0, None)),
     )
-    a, b = map(float, res.x)  # ← ensure native Python floats
-
+    a, b = map(float, res.x)
     rmse = float(np.sqrt(np.mean((log_model(x, a, b) - y) ** 2)))
-
-    return {"a": float(a), "b": float(b), "rmse": float(rmse)}
-
-
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-_CURVES = json.loads((_PROJECT_ROOT / "data" / "curves.json").read_text())
+    return {"a": a, "b": b, "rmse": rmse}
 
 
-def get_curves(task: str) -> Tuple[Dict[str, float], Dict[str, float]]:
+# ---------------------------------------------------------------------------#
+# curves.json loader                                                         #
+# ---------------------------------------------------------------------------#
+def _find_repo_root() -> Path:
     """
-    Return the (label_curve, gpu_curve) pair for *task*.
+    Walk upwards until we locate data/curves.json.
+    Allows this module to be imported from any working dir.
+    """
+    here = Path(__file__).resolve()
+    for parent in [here] + list(here.parents):
+        if (parent / "data" / "curves.json").is_file():
+            return parent
+    raise FileNotFoundError("Could not locate data/curves.json in parent tree.")
 
+
+_CURVES_PATH = _find_repo_root() / "data" / "curves.json"
+
+
+@lru_cache(maxsize=1)
+def _curves() -> Dict[str, Dict]:
+    return json.loads(_CURVES_PATH.read_text())
+
+
+# ---------------------------------------------------------------------------#
+# Public helper                                                              #
+# ---------------------------------------------------------------------------#
+def get_curves(base_name: str) -> Tuple[Dict[str, float], Dict[str, float]]:
+    """
     Parameters
     ----------
-    task : str
-        Key inside curves.json (e.g. "Dragut-2019-label").
+    base_name
+        ID without ``-label`` / ``-gpu`` suffix, e.g. ``Dragut-2019``.
+
+    Returns
+    -------
+    (label_curve_dict, gpu_curve_dict)
 
     Raises
     ------
     KeyError
-        If task is missing or either curve is absent.
+        If either resource is missing from curves.json.
     """
-    data = _CURVES[task]
-    return data["label_curve"], data["gpu_curve"]
+    curves = _curves()
+    lbl_key = f"{base_name}-label"
+    gpu_key = f"{base_name}-gpu"
+
+    try:
+        return curves[lbl_key]["label_curve"], curves[gpu_key]["gpu_curve"]
+    except KeyError as e:
+        raise KeyError(
+            f"Missing key {e} in curves.json. "
+            "Ensure both '-label' and '-gpu' resources exist."
+        ) from None

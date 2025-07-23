@@ -7,18 +7,22 @@ from pathlib import Path
 
 import streamlit as st
 
-from src.cucal.curves import get_curves
-from src.cucal.optimizer import optimise_budget
-from src.cucal.hardware import load_hardware, calculate_energy
+from cucal.curves import get_curves
+from cucal.optimizer import optimise_budget
+from cucal.hardware import load_hardware, calculate_energy
 
 # -----------------------------  Layout & title  ----------------------------#
 st.set_page_config(page_title="Cost-Utility Calculator", page_icon="🚀")
 st.title("Cost-Utility Calculator 🚀")
 
 # -----------------------------  Case-study curves  -------------------------#
-META = json.loads((Path("data") / "curves.json").read_text())
-task = st.selectbox("Choose case study", list(META))
-if (rmse := META[task].get("rmse")):
+META  = json.loads((Path("data") / "curves.json").read_text())
+BASES = sorted({k.rsplit("-", 1)[0] for k in META})        # Dragut-2019, …
+task  = st.selectbox("Choose case study", BASES)
+
+# show RMSE for the *label* curve (if present)
+rmse_entry = META.get(f"{task}-label", {}) or META.get(f"{task}-gpu", {})
+if (rmse := rmse_entry.get("rmse")):
     st.caption(f"Curve RMSE ≈ {rmse:.3f}")
 
 # ------------------------------  Inputs pane  -----------------------------#
