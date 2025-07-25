@@ -34,6 +34,16 @@ with c2:
     gpu_cost = st.number_input("GPU $/h", 0.10, value=3.00, step=0.10)
 with c3:
     budget = st.number_input("Total budget ($)", 1.0, value=100.0, step=1.0)
+mode = st.radio(
+    "Objective",
+    ["Maximise accuracy", "Hit accuracy target ↗"],
+    horizontal=True,
+)
+target_acc = None
+if mode == "Hit accuracy target ↗":
+    target_acc = st.number_input("Desired accuracy (0–1)", 0.50, 1.00, 0.90, 0.005)
+else:
+    target_acc = None   # explicit is better than implicit
 with c4:
     gpu_cap = st.number_input("Max GPU-h (0 = none)", min_value=0.0, value=0.0, step=1.0)
 gpu_cap = None if gpu_cap == 0 else gpu_cap
@@ -55,6 +65,9 @@ with col6:
 
 # ---------------------------  Run optimisation  ---------------------------#
 curve_lbl, curve_gpu = get_curves(task)
+
+rmse_entry = META.get(f"{task}-label", {}) or META.get(f"{task}-gpu", {})
+
 res = optimise_budget(
     label_cost=label_cost,
     gpu_cost=gpu_cost,
@@ -65,30 +78,50 @@ res = optimise_budget(
     max_gpu_hours=gpu_cap,
     wall_clock_limit_hours=wall_limit,
     cluster_efficiency_pct=efficiency_pct,
+    label_rmse=rmse_entry.get("rmse", 0.0),
+    target_accuracy = target_acc,
 )
 
 # ---------------------------  Display results  ----------------------------#
 if res is None:
-    st.warning("⚠️  No feasible allocation. Increase budget or relax caps.")
+    if target_acc is not None:
+        st.warning(
+            f"⚠️  Budget ${budget:.0f} cannot reach accuracy ≥ {target_acc:.3f}. "
+            "Raise the budget or lower the target."
+        )
+    else:
+        st.warning("⚠️  No feasible allocation. Increase budget or relax caps.")
 else:
+    # --- define label_hours so we can show it -----------------------------
+    label_hours = res["labels"] / gamma
     lo, hi = res["accuracy_ci"]
-    ci_txt = f"95 % CI: {lo:.3f} – {hi:.3f}"
-    st.metric("Expected accuracy", f"{res['accuracy']:.3f}", help=ci_txt)
+    ci_txt = f"95 % CI: {lo:.4f} – {hi:.4f}"
+    if target_acc is None:
+        st.metric("Expected accuracy", f"{res['accuracy']:.3f}", help=ci_txt)
+    else:
+        st.metric("Total cost to reach target", f"${res['label_dollars']+res['gpu_dollars']:.0f}")
 
-    st.markdown(
-        f"""
-<div style='background:#222;padding:1em;border-radius:8px;'>
+label_hours = res["labels"] / gamma
+
+st.markdown(
+    f"""
+<div style='background:#1e1e1e;padding:1em;border-radius:8px;'>
 <ul style='list-style-type:none;padding-left:0;color:#ddd;font-size:0.95em;'>
-  <li><b>Label:</b> {res['labels']:.0f} examples
+
+  <li><b>Label:</b> {res['labels']:.0f} (≈ {label_hours:.1f} h)
       <span style='color:#999;'>(${res['label_dollars']:.0f})</span></li>
-  <li><b>Train:</b> {res['gpu_hours']:.1f} GPU-h
+
+  <li><b>Annotate:</b> {label_hours:.1f} h&nbsp;|&nbsp;
+      <b>Train:</b> {res['gpu_hours']:.1f} GPU-h
       <span style='color:#999;'>(${res['gpu_dollars']:.0f})</span></li>
-  <li><b>Wall-clock:</b> {res['wall_clock_hours']:.1f} h @ {efficiency_pct}%</li>
+
+  <li><b>Wall-clock:</b> {res['wall_clock_hours']:.1f} h&nbsp;@&nbsp;{efficiency_pct}%</li>
 </ul>
 </div>
 """,
-        unsafe_allow_html=True,
-    )
+    unsafe_allow_html=True,
+)
+
 
 st.download_button(
     "📋 Copy plan as JSON",
@@ -97,9 +130,10 @@ st.download_button(
     mime="application/json",
 )
 
+time_arg = f"--time {int(wall_limit)} " if wall_limit else ""
 cli_snippet = (
     f"python -m cucal --budget {budget} "
-    f"--time {wall_limit or 0} --eff {efficiency_pct} {task}"
+    f"{time_arg}--eff {efficiency_pct} {task}"
 )
 st.code(cli_snippet, language="bash")
 

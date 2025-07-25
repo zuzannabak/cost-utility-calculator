@@ -53,11 +53,13 @@ def optimise_budget(
     budget: float,
     curve_label: Dict[str, float],
     curve_gpu: Dict[str, float],
+    label_rmse: float = 0.0,   # passed in from GUI (label curve)
     gamma: int = 5,
     max_gpu_hours: Optional[float] = None,
     wall_clock_limit_hours: Optional[float] = None,
     cluster_efficiency_pct: float = 100 * DEFAULT_CLUSTER_EFF,
     granularity: int = 1,
+    target_accuracy: float | None = None,   # NEW
 ) -> Optional[Dict[str, float]]:
     """
     Grid-search the $-space.
@@ -78,29 +80,59 @@ def optimise_budget(
     best: Optional[Dict[str, float]] = None
     efficiency = max(cluster_efficiency_pct, 1.0) / 100.0  # avoid /0
 
+    # -----------------------------------------------------------------------
+    # Grid-search     label_dollars ∈ [0 … budget]
+    #                 gpu_dollars   ∈ [0 … budget − label_dollars]
+    # -----------------------------------------------------------------------
     for label_dollars in range(0, budget + 1, granularity):
-        gpu_dollars = budget - label_dollars
+        for gpu_dollars in range(0, budget - label_dollars + 1, granularity):
 
-        labels = label_dollars / label_cost
-        gpu_hours = gpu_dollars / gpu_cost if gpu_cost else 0.0
+            spent = label_dollars + gpu_dollars            # NEW — total $
 
-        if max_gpu_hours is not None and gpu_hours > max_gpu_hours:
-            continue
+            # ---------- convert dollars → units --------------------------------
+            labels      = label_dollars / label_cost
+            label_hours = labels / gamma
+            gpu_hours   = gpu_dollars / gpu_cost if gpu_cost else 0.0
 
-        # Wall-clock = GPU-hours ÷ (cluster efficiency)
-        wall_clock = gpu_hours / efficiency if efficiency else float("inf")
-        if wall_clock_limit_hours is not None and wall_clock > wall_clock_limit_hours:
-            continue
+            # ---------- caps ----------------------------------------------------
+            if max_gpu_hours is not None and gpu_hours > max_gpu_hours:
+                continue
 
-        acc = _combine(
-            _eval_curve(curve_label["a"], curve_label["b"], labels),
-            _eval_curve(curve_gpu["a"], curve_gpu["b"], gpu_hours),
-        )
+            wall_clock = gpu_hours / efficiency + label_hours
+            if (
+                wall_clock_limit_hours is not None
+                and wall_clock > wall_clock_limit_hours
+            ):
+                continue
 
-        if best is None or acc > best["accuracy"]:
-            rmse = curve_label.get("rmse", 0.0)
+            # ---------- accuracy ------------------------------------------------
+            acc = _combine(
+                _eval_curve(curve_label["a"], curve_label["b"], labels),
+                _eval_curve(curve_gpu["a"], curve_gpu["b"], gpu_hours),
+            )
+
+            # ---------- pick “better” plan --------------------------------------
+            if target_accuracy is None:                         # maximise acc
+                better = (
+                    best is None
+                    or acc > best["accuracy"]
+                    or (acc == best["accuracy"] and spent > best["spent"])
+                )
+            else:                                               # hit target
+                meets_target = acc >= target_accuracy
+                better = (
+                    meets_target
+                    and (best is None or spent < best["spent"])
+                )
+
+            if not better:
+                continue
+
+            # ---------- confidence interval -------------------------------------
+            rmse = (label_rmse**2 + curve_gpu.get("rmse", 0.0) ** 2) ** 0.5
             ci_lo = max(0.0, acc - 1.96 * rmse)
             ci_hi = min(1.0, acc + 1.96 * rmse)
+
             best = {
                 "accuracy": acc,
                 "accuracy_ci": (ci_lo, ci_hi),
@@ -109,7 +141,10 @@ def optimise_budget(
                 "wall_clock_hours": wall_clock,
                 "label_dollars": label_dollars,
                 "gpu_dollars": gpu_dollars,
+                "spent": spent,                     # <- tie-break helper
             }
+
+
 
     return best
 
