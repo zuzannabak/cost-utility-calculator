@@ -90,6 +90,19 @@ else:
         unsafe_allow_html=True,
     )
 
+st.download_button(
+    "📋 Copy plan as JSON",
+    data=json.dumps(res, indent=2),
+    file_name=f"{task.lower()}_plan.json",
+    mime="application/json",
+)
+
+cli_snippet = (
+    f"python -m cucal --budget {budget} "
+    f"--time {wall_limit or 0} --eff {efficiency_pct} {task}"
+)
+st.code(cli_snippet, language="bash")
+
 # -------------------------------  ENERGY  ----------------------------------#
 st.header("Energy usage")
 
