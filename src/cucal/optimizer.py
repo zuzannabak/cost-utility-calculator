@@ -90,9 +90,9 @@ def optimise_budget(
             spent = label_dollars + gpu_dollars            # NEW — total $
 
             # ---------- convert dollars → units --------------------------------
-            labels      = label_dollars / label_cost
+            labels = label_dollars / label_cost
             label_hours = labels / gamma
-            gpu_hours   = gpu_dollars / gpu_cost if gpu_cost else 0.0
+            gpu_hours = gpu_dollars / gpu_cost if gpu_cost else 0.0
 
             # ---------- caps ----------------------------------------------------
             if max_gpu_hours is not None and gpu_hours > max_gpu_hours:
@@ -143,8 +143,6 @@ def optimise_budget(
                 "gpu_dollars": gpu_dollars,
                 "spent": spent,                     # <- tie-break helper
             }
-
-
 
     return best
 
