@@ -27,8 +27,14 @@ requirements.txt – Python dependencies
 
 ## Quick Start (local)
 
-git clone https://github.com/<USER>/cost-utility-calculator.git
+```bash
+git clone https://github.com/<zuzannabak/cost-utility-calculator.git
 cd cost-utility-calculator
+
+# ----- create env & install -----
+python -m venv .venv && source .venv/bin/activate
+pip install -e .[dev]          # editable install; add extras as needed
+
 
 # Conda
 conda create -n cucal python=3.11

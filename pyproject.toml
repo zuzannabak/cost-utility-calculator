@@ -1,16 +1,29 @@
-[project]
-name = "cost-utility-calculator"
-version = "0.4.0"
-requires-python = ">=3.9"
-dependencies = ["numpy", "scipy"]
-
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]                       # <<< fix starts here
-package-dir = {"" = "src"}              # look for packages under src/
-packages = ["cucal", "api"]             # list the real package names
-# -- OR, if you prefer automatic discovery --
-# [tool.setuptools.packages.find]
-# where = ["src"]
+[project]
+name = "cost-utility-calculator"
+version = "0.4.0"
+description = "Cost-Utility Calculator for NLP model development"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "scipy",
+    # add streamlit, matplotlib, etc. if you install from PyPI
+]
+
+# -----------------------------------------------------------------------------
+# Packaging layout: all source lives in the src/ directory
+# -----------------------------------------------------------------------------
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# -----------------------------------------------------------------------------
+# Console-script entry point
+#   After `pip install -e .` (editable) or a normal install, the command
+#   `cucal` will run cucal.__main__:main
+# -----------------------------------------------------------------------------
+[project.scripts]
+cucal = "cucal.__main__:main"
