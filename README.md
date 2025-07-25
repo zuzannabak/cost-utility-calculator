@@ -9,6 +9,8 @@ compact NLP models.
 - 📈 **Interactive curves** – visualise marginal utility & diminishing returns.  
 - 🕒 **Time-budget constraint (NEW, Week 4)** – slider lets you cap total wall-clock hours; simulator prunes solutions that exceed it.  
 - 🌳 *Optional* **CO₂ tracker** – estimate carbon for each configuration.
+- 📋 **One-click JSON export (NEW, Week 5)** – download the exact plan as a JSON file.  
+- 🐚 **Reproducible CLI snippet (NEW, Week 5)** – Streamlit shows the shell command that yields the same result.
 
 ## Project Goals
 1. Formalise the allocation problem with marginal-utility economics.
@@ -55,17 +57,21 @@ Then open the browser tab that Streamlit launches and:
   • Move the **Label-Cost ($)** and **GPU-Cost ($)** sliders to match your scenario.  
   • Set **Budget ($)** and (optionally) **Time Budget (h)**.  
   • Read off the recommended split and expected utility.
+  • Click **📋 Copy plan as JSON** to export the full optimiser output.  
+  • Copy the **CLI snippet** (auto-generated below the card) to reproduce the run in any shell.
 
 
 ### Run from the CLI
 
 python -m cost_utility_calculator \
   --task dragut_2019 \
+  --budget 3000 --time 72 --eff 85 \
   --label-cost 0.07 \
   --gpu-cost 1.50 \
   --budget 3000 \
   --max-gpu-hours 800 \
   --wall-clock-limit 72      # cap run-time at 72 h
+  --max-gpu-hours 800
 
 The script prints the optimal allocation and metadata as JSON.
 
