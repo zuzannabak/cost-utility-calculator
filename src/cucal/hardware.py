@@ -22,3 +22,24 @@ def calculate_energy(power_w: float, gpu_hours: float) -> float:
     Energia (Wh) = pobór mocy [W] × czas działania [h].
     """
     return power_w * gpu_hours
+
+
+# ---------------------------------------------------------------------
+# 🆕 Carbon calculator
+# ---------------------------------------------------------------------
+def co2_equivalent(energy_wh: float, gco2_per_kwh: float) -> float:
+    """Return g CO₂ for the given **energy_wh** (Wh).
+
+    Parameters
+    ----------
+    energy_wh : float
+        Watt-hours consumed.
+    gco2_per_kwh : float
+        Grid-intensity (grams CO₂ per kWh), user-supplied.
+
+    Examples
+    --------
+    >>> co2_equivalent(12_000, gco2_per_kwh=450)
+    5400.0
+    """
+    return energy_wh / 1_000 * gco2_per_kwh

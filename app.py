@@ -152,7 +152,21 @@ with col7:
 with col8:
     gpu_hours = st.number_input("GPU-hours:", 0.0, step=0.25, value=1.0)
 
+# ---------- NEW  CO₂ slider ----------------------------------------
+co2_grid = st.slider(
+    "Grid carbon intensity (g CO₂ / kWh)",
+    min_value=100,
+    max_value=800,
+    value=450,
+    step=10,
+)
+
 if st.button("Compute energy"):
     power = hardware_db[selected_gpu]["power"]  # W
     energy = calculate_energy(power, gpu_hours)  # Wh
-    st.success(f"**Energy used:** {energy:,.0f} Wh")
+    from cucal.hardware import co2_equivalent
+    co2 = co2_equivalent(energy, co2_grid)
+    st.success(
+        f"**Energy:** {energy:,.0f} Wh  |  "
+        f"**Footprint:** {co2:,.0f} g CO₂"
+    )
