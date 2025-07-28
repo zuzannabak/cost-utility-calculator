@@ -16,10 +16,10 @@ from cucal.optimizer import optimise_budget           # <- k-resource API
 
 # ------------------------- helpers ------------------------- #
 PAPER_ACCURACY = 0.785      # Dragut-2019 F1   (edit!)
-THRESHOLD     = 0.15       # 0.5 percentage-point
+THRESHOLD     = 0.15       # 0.15 percentage-point
 
 
-def _run_validation(budget: float, time_cap: float, eff: float) -> None:
+def _run_validation(budget: float, time_cap: float, eff: float, gamma) -> None:
     root = Path(__file__).resolve().parents[1]          # repo root
     curves = json.loads((root / "data" / "curves.json").read_text())
 
@@ -34,6 +34,7 @@ def _run_validation(budget: float, time_cap: float, eff: float) -> None:
         curve_gpu=gpu_entry["gpu_curve"],
         wall_clock_limit_hours=time_cap,
         cluster_efficiency_pct=eff * 100,
+        gamma=gamma,
     )
 
     sim_acc = result["accuracy"]
@@ -59,8 +60,9 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--budget", type=float, default=1500, help="Total budget in $")
     p.add_argument("--time",   type=float, default=24,   help="Max wall-clock hours")
     p.add_argument("--eff",    type=float, default=1.0,  help="Cluster efficiency 0–1")
+    p.add_argument("--gamma", type=int, default=5, help="Instances/hour")
     args = p.parse_args(argv)
-    _run_validation(args.budget, args.time, args.eff)
+    _run_validation(args.budget, args.time, args.eff, args.gamma)
 
 
 if __name__ == "__main__":   # pragma: no cover

@@ -48,7 +48,7 @@ class AllocationPlan:
 # ---------------------------------------------------------------------------#
 def optimise_budget(
     *,
-    label_cost: float,
+    label_cost: float,          # $ per **instance**
     gpu_cost: float,
     budget: float,
     curve_label: Dict[str, float],

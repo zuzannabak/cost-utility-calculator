@@ -29,7 +29,10 @@ if (rmse := rmse_entry.get("rmse")):
 # -----------------------------  Input controls  -----------------------------#
 c1, c2, c3, c4 = st.columns(4)
 with c1:
-    label_cost = st.number_input("Label cost ($)", 0.01, value=0.10, step=0.01)
+    label_cost_hour = st.number_input("Labels $/h", min_value=0.0, value=8.0)
+    gamma = st.slider("γ (instances / hour)", 1, 30, 5)
+    label_cost_instance = label_cost_hour / gamma   # ← **per-instance**
+
 with c2:
     gpu_cost = st.number_input("GPU $/h", 0.10, value=3.00, step=0.10)
 with c3:
@@ -45,13 +48,12 @@ if mode == "Hit accuracy target ↗":
 else:
     target_acc = None   # explicit is better than implicit
 with c4:
-    gpu_cap = st.number_input("Max GPU-h (0 = none)", min_value=0.0, value=0.0, step=1.0)
+    gpu_cap = st.number_input(
+        "Max GPU-h  (leave 0 for no limit)",
+        min_value=0.0, value=0.0, step=1.0
+    )
 gpu_cap = None if gpu_cap == 0 else gpu_cap
 
-gamma = st.number_input(
-    "γ (instances / h)", min_value=1, max_value=50, value=5,
-    help="Labelling throughput."
-)
 
 st.subheader("⏱ Time constraints")
 col5, col6 = st.columns(2)
@@ -69,7 +71,7 @@ curve_lbl, curve_gpu = get_curves(task)
 rmse_entry = META.get(f"{task}-label", {}) or META.get(f"{task}-gpu", {})
 
 res = optimise_budget(
-    label_cost=label_cost,
+    label_cost=label_cost_instance,
     gpu_cost=gpu_cost,
     budget=budget,
     curve_label=curve_lbl,
@@ -87,8 +89,9 @@ if res is None:
     if target_acc is not None:
         st.warning(
             f"⚠️  Budget ${budget:.0f} cannot reach accuracy ≥ {target_acc:.3f}. "
-            "Raise the budget or lower the target."
+            "Raise the budget or lower the accuracy target."
         )
+        st.stop()
     else:
         st.warning("⚠️  No feasible allocation. Increase budget or relax caps.")
 else:
@@ -152,7 +155,21 @@ with col7:
 with col8:
     gpu_hours = st.number_input("GPU-hours:", 0.0, step=0.25, value=1.0)
 
+# ---------- NEW  CO₂ slider ----------------------------------------
+co2_grid = st.slider(
+    "Grid carbon intensity (g CO₂ / kWh)",
+    min_value=100,
+    max_value=800,
+    value=450,
+    step=10,
+)
+
 if st.button("Compute energy"):
     power = hardware_db[selected_gpu]["power"]  # W
     energy = calculate_energy(power, gpu_hours)  # Wh
-    st.success(f"**Energy used:** {energy:,.0f} Wh")
+    from cucal.hardware import co2_equivalent
+    co2 = co2_equivalent(energy, co2_grid)
+    st.success(
+        f"**Energy:** {energy:,.0f} Wh  |  "
+        f"**Footprint:** {co2:,.0f} g CO₂"
+    )
