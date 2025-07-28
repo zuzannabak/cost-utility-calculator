@@ -20,9 +20,7 @@ Total estimated relevant papers in domain: ~1200 (from Semantic Scholar & Google
 
 ## Final Estimate
 
-\[
-0.48 	imes 1200 = oxed{576}
-\]
+**Estimate**: `0.48 × 1200 = 576`
 
 Roughly **576 papers** from 2015–2025 are estimated to contain usable empirical curves suitable for:
 - Re-fitting accuracy vs. label/compute cost curves
