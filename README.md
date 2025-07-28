@@ -72,6 +72,7 @@ python -m cost_utility_calculator \
   --max-gpu-hours 800 \
   --wall-clock-limit 72      # cap run-time at 72 h
   --max-gpu-hours 800
+```
 
 The script prints the optimal allocation and metadata as JSON.
 
