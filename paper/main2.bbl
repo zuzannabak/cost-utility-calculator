@@ -1,0 +1,100 @@
+\begin{thebibliography}{17}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Angelopoulos and Others(2025)]{Angelopoulos2025}
+A.~N. Angelopoulos and Others.
+\newblock Cost‐optimal active ai model evaluation.
+\newblock In \emph{Proceedings of ICML}, 2025.
+
+\bibitem[Azeemi and Others(2024)]{Azeemi2024}
+A.~H. Azeemi and Others.
+\newblock Language model–driven data pruning enables efficient active
+  learning.
+\newblock \emph{arXiv preprint arXiv:2410.04275}, 2024.
+\newblock URL \url{https://arxiv.org/abs/2410.04275}.
+
+\bibitem[Contardo(2017)]{Contardo2017}
+G.~Contardo.
+\newblock \emph{Machine Learning Under Budget Constraints}.
+\newblock PhD thesis, Université Paris‐Saclay, 2017.
+
+\bibitem[Dragut and Others(2019)]{Dragut2019}
+Eduard Dragut and Others.
+\newblock Cost‐effective transfer learning for {NLP}.
+\newblock In \emph{Proceedings of KDD}, 2019.
+
+\bibitem[Falkner and Others(2018)]{Falkner2018bohb}
+S.~Falkner and Others.
+\newblock {BOHB}: Robust and efficient hyperparameter optimization at scale.
+\newblock In \emph{Proceedings of ICML}, 2018.
+
+\bibitem[Haug(2021)]{Haug2021}
+M.~L. Haug.
+\newblock \emph{Minimizing Labeling Effort with Active Learning}.
+\newblock PhD thesis, Norwegian University of Science and Technology (NTNU),
+  2021.
+
+\bibitem[He(2024)]{He2024}
+R.~He.
+\newblock \emph{Advancing Multi‐Domain Active Learning}.
+\newblock PhD thesis, University of Birmingham, 2024.
+
+\bibitem[Hu and Others(2021)]{Hu2021}
+Q.~Hu and Others.
+\newblock Exploring the limitations of active learning.
+\newblock In \emph{Proceedings of ASE}, 2021.
+
+\bibitem[Kang and Others(2023)]{Kang2023}
+D.~Kang and Others.
+\newblock Scaling laws for training efficiency.
+\newblock In \emph{Proceedings of ACL}, 2023.
+
+\bibitem[Khodabandeh(2023)]{Khodabandeh2023}
+M.~Khodabandeh.
+\newblock \emph{Addressing the Labeled Data Scarcity Problem}.
+\newblock PhD thesis, Simon Fraser University, 2023.
+
+\bibitem[Li and Others(2017)]{Li2017hyperband}
+L.~Li and Others.
+\newblock Hyperband: A novel bandit‐based approach to hyper‐parameter
+  optimization.
+\newblock In \emph{Proceedings of ICLR}, 2017.
+
+\bibitem[Liu(2019)]{Liu2019}
+M.~Liu.
+\newblock \emph{Weak Supervision and Active Learning for {NLP}}.
+\newblock PhD thesis, Monash University, 2019.
+
+\bibitem[Patterson and Others(2022)]{Patterson2022}
+D.~Patterson and Others.
+\newblock Carbon‐aware machine learning.
+\newblock \emph{Communications of the {ACM}}, 2022.
+\newblock \doi{10.1145/3564522}.
+
+\bibitem[Rouzegar(2024)]{Rouzegar2024}
+H.~Rouzegar.
+\newblock Llm‐powered active learning for cost‐effective text
+  classification.
+\newblock \emph{arXiv preprint arXiv:2403.12345}, 2024.
+
+\bibitem[Schwartz and Others(2020)]{Schwartz2020}
+R.~Schwartz and Others.
+\newblock Green ai.
+\newblock \emph{Communications of the {ACM}}, 2020.
+\newblock \doi{10.1145/3381831}.
+
+\bibitem[Stiennon and Others(2021)]{Stiennon2021}
+N.~Stiennon and Others.
+\newblock Learning to summarize with human feedback.
+\newblock \emph{NeurIPS}, 2021.
+
+\bibitem[Wu(2024)]{Wu2024}
+T.~Wu.
+\newblock Reducing the cost of test data labeling.
+\newblock Master's thesis, University of Ottawa, 2024.
+
+\end{thebibliography}

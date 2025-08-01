@@ -30,7 +30,7 @@ if (rmse := rmse_entry.get("rmse")):
 c1, c2, c3, c4 = st.columns(4)
 with c1:
     label_cost_hour = st.number_input("Labels $/h", min_value=0.0, value=8.0)
-    gamma = st.slider("γ (instances / hour)", 1, 30, 5)
+    gamma = st.slider("γ (instances / hour)", 1, 30, 20)
     label_cost_instance = label_cost_hour / gamma   # ← **per-instance**
 
 with c2:
@@ -49,8 +49,8 @@ else:
     target_acc = None   # explicit is better than implicit
 with c4:
     gpu_cap = st.number_input(
-        "Max GPU-h  (leave 0 for no limit)",
-        min_value=0.0, value=0.0, step=1.0
+        "Max GPU-hours",
+        min_value=0.0, value=0.0, step=1.0, help="0 = no limit"
     )
 gpu_cap = None if gpu_cap == 0 else gpu_cap
 
@@ -58,7 +58,7 @@ gpu_cap = None if gpu_cap == 0 else gpu_cap
 st.subheader("⏱ Time constraints")
 col5, col6 = st.columns(2)
 with col5:
-    wall_limit = st.slider("Time budget (hours)", 0, 168, 0, 1, help="0 = no limit")
+    wall_limit = st.slider("Time budget (h)", 0, 168, 0, 1, help="0 = no limit")
     wall_limit = None if wall_limit == 0 else float(wall_limit)
 with col6:
     efficiency_pct = st.slider(

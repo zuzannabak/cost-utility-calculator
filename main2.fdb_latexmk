@@ -1,0 +1,14 @@
+# Fdb version 4
+["xdvipdfmx"] 0 "main2.xdv" "main2.pdf" "main2" 0 -1
+  "main2.xdv" 0 -1 0 "xelatex"
+  (generated)
+  "main2.pdf"
+  (rewritten before read)
+["xelatex"] 0 "paper/main2.tex" "main2.xdv" "main2" 0 -1
+  "main2.aux" 0 -1 0 "xelatex"
+  "paper/main2.tex" 0 -1 0 ""
+  (generated)
+  "main2.aux"
+  "main2.log"
+  "main2.xdv"
+  (rewritten before read)
