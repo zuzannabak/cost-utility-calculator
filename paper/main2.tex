@@ -18,6 +18,10 @@
 \usepackage{verbatim}
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta}
+\usepackage{siunitx}          % < NEW
+\DeclareSIUnit{\fOneScore}{F1}
+\sisetup{per-mode=symbol}     % use “g CO2/kWh”, not “g per kWh”
+\newcommand{\COtwo}{\mathrm{CO_{2}}}  % upright CO2
 \usepackage{float}
 \usepackage{microtype}
 \sloppy
@@ -159,7 +163,7 @@ insufficient compute for convergence.
 
 The carbon story compounds the inefficiency:
 those 14 GPU-h emit
-$14\times135\text{ g}=1.9\text{ kg CO\textsubscript{2}}$
+$14\times135 = 1.9\, \text{kg}\,\COtwo$
 for negligible accuracy gain.
 
 \paragraph{Decision complexity.}
@@ -179,7 +183,7 @@ For this scenario CUCal recommends
 wall-clock) and
 \emph{\$340 on GPU} (11 GPU-h),
 achieving 0.84 F1 while emitting only
-$11\times135=1.5\text{ kg CO\textsubscript{2}}$—
+$11\times135 = 1.5\,\text{kg}\,\COtwo$ —
 a 22\,\% carbon reduction and 12\,\% budget saving
 relative to the best naïve plan.
 
@@ -249,6 +253,8 @@ For every paper-resource pair we digitise the reported points
   U(n)=a\bigl(1-e^{-bn}\bigr)
 \]
 
+Table~\ref{tab:notation} summarises all symbols used in this section.
+
 \begin{table}[htbp]
   \centering
   \caption{Symbols used throughout Section~\ref{sec:methodology}.}
@@ -271,6 +277,8 @@ For every paper-resource pair we digitise the reported points
 by non-linear least-squares (SciPy’s
 \texttt{curve\_fit}).\footnote{The exponential saturates smoothly,
 in contrast to power-law fits whose derivatives diverge at \(n{=}0\).}
+
+Fitted parameters and their RMSE are listed in Table~\ref{tab:curves}.
 
 \begin{table}[ht]
   \centering
@@ -295,7 +303,7 @@ Table~\ref{tab:curves} lists the fitted parameters and root-mean-square error (R
 
 \subsection{Objective and constraints}\label{sec:method:optim}
 Let \(x_{\mathrm{lbl}}\) and \(x_{\mathrm{gpu}}\) be dollars spent on
-labels and GPU time.  CUCal maximises the **combined utility**
+labels and GPU time.  CUCal maximises the \textbf{combined utility}
 \[
   U_{\text{tot}}
   \;=\;
@@ -322,21 +330,8 @@ Here \(c_{\mathrm{lbl}}\,[\$/\text{instance}]=0.02\),
 \(p=300\;\text{W}\) GPU power draw, and
 \(\kappa=450\;\text{g CO\(_2\)}/\text{kWh}\).
 
-\begin{figure}[htbp]
-  \centering
-  \begin{tikzpicture}[node distance=1.8cm,
-                      every node/.style={draw, align=center}]
-    \node (input) {Input\\Curves \& Caps};
-    \node (fit)   [right=of input] {Curve-fit\\$U(n)=a(1-e^{-bn})$};
-    \node (grid)  [right=of fit]   {Grid search\\over \$-splits};
-    \node (best)  [right=of grid]  {Best plan\\($x_{\mathrm{lbl}},x_{\mathrm{gpu}}$)};
-    \draw[->] (input) -- (fit);
-    \draw[->] (fit)   -- (grid);
-    \draw[->] (grid)  -- (best);
-  \end{tikzpicture}
-  \caption{CUCal processing pipeline.}
-  \label{fig:pipeline}
-\end{figure}
+In the remainder of this section we refer to the CUCal pipeline
+illustrated in Figure~\ref{fig:pipeline}.
 
 \subsection{Solver}
 Because the feasible region is small (budget granularity \$5),
@@ -350,6 +345,22 @@ for xlbl in range(0, B + 1, 5):
     u = utility(xlbl, xgpu)
     best = max(best, (u, xlbl, xgpu))
 \end{verbatim}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[node distance=1.5cm,
+                      every node/.style={draw, align=center}]
+    \node (input) {Input\\Curves \& Caps};
+    \node (fit)   [right=of input] {Curve-fit\\$U(n)=a(1-e^{-bn})$};
+    \node (grid)  [right=of fit]   {Grid search\\over \$-splits};
+    \node (best)  [right=of grid]  {Best plan\\($x_{\mathrm{lbl}},x_{\mathrm{gpu}}$)};
+    \draw[->] (input) -- (fit);
+    \draw[->] (fit)   -- (grid);
+    \draw[->] (grid)  -- (best);
+  \end{tikzpicture}
+  \caption{Processing pipeline: curve-fit stage feeds an exhaustive grid search that returns the globally optimal \$-split.}
+  \label{fig:pipeline}
+\end{figure}
 
 % =======================================================
 \section{Experiments}\label{sec:experiments}
@@ -366,17 +377,22 @@ at \(\kappa=450\text{ g CO\(_2\)}/\text{kWh}\).
 
 \subsection{E1 Curve-fit validation}
 
+Figure~\ref{fig:dragut_curves} contrasts the raw points with CUCal’s
+exponential fit.
+
+
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.78\linewidth]{figures/dragut_curves.pdf}
-  \caption{Fitted label and GPU curves on a common \$-axis
-           (Dragut 2019).}
+  \caption{CUCal’s exponential fits (solid) against Dragut-2019 raw data (dots) on a common \$-axis.}
   \label{fig:dragut_curves}
 \end{figure}
 
 Figure~\ref{fig:dragut_curves} overlays CUCal’s fits on the
 Dragut-2019 raw points.  RMSE values in Table~\ref{tab:curves}
 match the visual quality.
+
+Table~\ref{tab:rmse} confirms that every fit stays below 0.09 RMSE.
 
 \begin{table}[ht]
   \centering
@@ -404,10 +420,13 @@ CUCal recommends \$60 labels (3 k inst) + \$340 GPU (11 GPU-h),
 achieving expected \(F1=0.84\) at 1.5 kg CO\(_2\)
 (Figure~\ref{fig:scenarioA}).
 
+Figure~\ref{fig:scenarioA} previews CUCal’s recommended \$60/\$340 split
+and the resulting \SI{0.84}{\fOneScore}.
+
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.75\linewidth]{figures/scenarioA.png}
-  \caption{CUCal allocation and resulting accuracy for Scenario A.}
+  \caption{Budget split (bars) and achieved accuracy (dashed line) for Scenario A.}
   \label{fig:scenarioA}
 \end{figure}
 
@@ -418,6 +437,11 @@ CUCal finds the cheapest plan at \$45 labels + \$265 GPU
 (total \$310), finishing in 19 h and emitting 1.2 kg CO\(_2\).
 
 \subsection{E4 Efficiency sensitivity}
+
+The relationship is visualised in Figure~\ref{fig:heatmap}, which maps
+cluster efficiency $\eta$ to the minimal cost required to hit
+\SI{0.83}{\fOneScore}.
+
 Figure~\ref{fig:heatmap} sweeps cluster efficiency
 \(\eta\in[0.5,1.0]\).  
 Dropping \(\eta\) from 0.9 to 0.5 inflates cost by 18\,\% because
@@ -426,8 +450,7 @@ runtime scales linearly with $\eta^{-1}$.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.78\linewidth]{figures/heatmap_eff.png}
-  \caption{Minimal cost (colour) vs.\ cluster efficiency for
-           the 0.83-F1 target.}
+  \caption{Minimal cost (colour) required to reach \SI{0.83}{\fOneScore} as cluster efficiency $\eta$ varies.}
   \label{fig:heatmap}
 \end{figure}
 
@@ -446,6 +469,7 @@ and (iii) beats naïve single-axis budgets by up to 12 \%.
 % =======================================================
 \section{Discussion \& Conclusion}\label{sec:discussion}
 \subsection{Key Findings}
+\setlength\itemsep{0.3em}
 \begin{itemize}
   \item \textbf{Diminishing returns.}  Across all case-studies CUCal
         observes an inflection at $\approx\!15$\,\% of the total budget

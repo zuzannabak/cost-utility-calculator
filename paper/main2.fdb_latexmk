@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main2"] 1754016019.88957 "main2.aux" "main2.bbl" "main2" 1754016023.13782 0
+["bibtex main2"] 1754062291.15566 "main2.aux" "main2.bbl" "main2" 1754062347.84138 0
   "./references.bib" 1753907954 3353 58d58525379017ff6208a21297ae089d ""
   "C:/Program Files/MiKTeX/bibtex/bst/natbib/plainnat.bst" 1284455456 26816 ffe5423d2019860bad9f54bc402fac15 ""
-  "main2.aux" 1754016022 7438 15b8ae76568b956eb28238de4da2254a "pdflatex"
+  "main2.aux" 1754062346 7764 46e5a2ec2bbe1090b403833bc8ccb8f2 "pdflatex"
   (generated)
   "main2.bbl"
   "main2.blg"
   (rewritten before read)
-["pdflatex"] 1754016020.29723 "c:/Users/zuzia/OneDrive - Temple University/Documents/MS Computational DS/Summer 2025/Research/Project/cost-utility-calculator/paper/main2.tex" "main2.pdf" "main2" 1754016023.1388 0
+["pdflatex"] 1754062344.26344 "c:/Users/zuzia/OneDrive - Temple University/Documents/MS Computational DS/Summer 2025/Research/Project/cost-utility-calculator/paper/main2.tex" "main2.pdf" "main2" 1754062347.84228 0
   "C:/Program Files/MiKTeX/tex/generic/bigintcalc/bigintcalc.sty" 1576433602 40635 c40361e206be584d448876bba8a64a3b ""
   "C:/Program Files/MiKTeX/tex/generic/bitset/bitset.sty" 1575926576 33961 6b5c75130e435b2bfdb9f480a09a39f9 ""
   "C:/Program Files/MiKTeX/tex/generic/gettitlestring/gettitlestring.sty" 1576433666 8371 9d55b8bd010bc717624922fb3477d92e ""
@@ -38,6 +38,9 @@
   "C:/Program Files/MiKTeX/tex/latex/newunicodechar/newunicodechar.sty" 1523267132 4267 750798269645c90ec73b605fc5832add ""
   "C:/Program Files/MiKTeX/tex/latex/refcount/refcount.sty" 1576433952 9878 9e94e8fa600d95f9c7731bb21dfb67a4 ""
   "C:/Program Files/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1751104012 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
+  "C:/Program Files/MiKTeX/tex/latex/siunitx/siunitx.sty" 1752082377 344221 f0c98c737eca26294f5039e8afde731f ""
+  "C:/Program Files/MiKTeX/tex/latex/translations/dicts/translations-basic-dictionary-english.trsl" 1644048522 5588 0c1628daf15f4411ff1f463114c634a3 ""
+  "C:/Program Files/MiKTeX/tex/latex/translations/translations.sty" 1644048522 44247 2188b95d0ee74e31eca4d316263c58a7 ""
   "C:/Users/zuzia/AppData/Local/MiKTeX/miktex/data/le/xetex/xelatex.fmt" 1753906400 37546278 c631e3316cb8d0869152c21e50b97e3a ""
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/fonts/tfm/adobe/zapfding/pzdr.tfm" 1136790254 1528 7e12f4c0fcf5a072cebdcfbfc610f54c ""
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1233951848 1004 54797486969f23fa377b128694d548df ""
@@ -168,17 +171,18 @@
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/tex/latex/pgf/utilities/pgffor.sty" 1673775190 348 ee405e64380c11319f0e249fed57e6c5 ""
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/tex/latex/pgf/utilities/pgfkeys.sty" 1673775190 274 5ae372b7df79135d240456a1c6f2cf9a ""
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/tex/latex/pgf/utilities/pgfrcs.sty" 1673775190 325 f9f16d12354225b7dd52a3321f085955 ""
+  "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/tex/latex/tools/array.sty" 1700599895 12667 e4b5eb11e4b7239e6c8a52bbe074a6c6 ""
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/tex/latex/tools/verbatim.sty" 1700599895 7500 db31c3d04f8bc9010e47a5efbbace9ff ""
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1700127522 55487 80a65caedd3722f4c20a14a69e785d8f ""
-  "c:/Users/zuzia/OneDrive - Temple University/Documents/MS Computational DS/Summer 2025/Research/Project/cost-utility-calculator/paper/main2.tex" 1754016018 21260 be6ae2a590f97324a292c6e07e122b55 ""
+  "c:/Users/zuzia/OneDrive - Temple University/Documents/MS Computational DS/Summer 2025/Research/Project/cost-utility-calculator/paper/main2.tex" 1754062343 22306 6fd793103970e306dbbcfaadf23b112a ""
   "figures/dragut_curves.pdf" 1753996403 16500 29128ddf0a5234197ad41f09e74a87f7 ""
   "figures/heatmap_eff.png" 1753997594 13825 b03b8181061eed278bdaf99c2bcca570 ""
-  "figures/scenarioA.png" 1753997601 14636 e3d9bc3dc15a68fbba6e2181ee6c8334 ""
-  "main2.aux" 1754016022 7438 15b8ae76568b956eb28238de4da2254a "pdflatex"
-  "main2.bbl" 1754016020 3446 f6131cf0bdbd1284978e7579378cc4a7 "bibtex main2"
-  "main2.out" 1754016022 3601 78d13ac6b601d099256c0fe8831c3d7d "pdflatex"
-  "main2.tex" 1754016018 21260 be6ae2a590f97324a292c6e07e122b55 ""
+  "figures/scenarioA.png" 1754057290 96136 e964076a07ddb8d9a0bff49688a6b0e0 ""
+  "main2.aux" 1754062346 7764 46e5a2ec2bbe1090b403833bc8ccb8f2 "pdflatex"
+  "main2.bbl" 1754062291 3446 f6131cf0bdbd1284978e7579378cc4a7 "bibtex main2"
+  "main2.out" 1754062346 3601 78d13ac6b601d099256c0fe8831c3d7d "pdflatex"
+  "main2.tex" 1754062343 22306 6fd793103970e306dbbcfaadf23b112a ""
   (generated)
   "main2.aux"
   "main2.log"

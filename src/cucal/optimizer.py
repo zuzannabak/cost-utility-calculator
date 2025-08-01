@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import Dict, Optional, Union
 
 import numpy as np
-from src.api import k_resource  # external dependency
+from api import k_resource  # external dependency
 
 from .config import DEFAULT_CLUSTER_EFF
 
