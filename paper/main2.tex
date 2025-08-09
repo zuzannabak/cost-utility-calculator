@@ -118,7 +118,7 @@ CUCal offers:
 \begin{itemize}
   \item \textbf{Formulation.}  We cast budget allocation as a
         $k$-resource utility-maximisation problem with hard caps on
-        money, time and carbon.
+        money and time, with CO$_2$ reported as a post-hoc metric.
   \item \textbf{Algorithm.}  A two-stage pipeline—curve fitting and
         exhaustive grid search—solves the problem in under 30 ms for
         two resources.
@@ -423,6 +423,8 @@ Here \(c_{\mathrm{lbl}}\,[\$/\text{instance}]=0.02\),
 \(\gamma=5\;\text{inst/annot-h}\),
 \(p=300\;\text{W}\) GPU power draw, and
 \(\kappa=450\;\text{g CO\(_2\)}/\text{kWh}\).
+
+\noindent\emph{Implementation note (v1):} The current release computes CO$_2$ \emph{post hoc}; the $\kappa$ constraint is not enforced by the solver. We leave the hard cap $E_{\max}$ for future work (§6.3).
 
 In the remainder of this section we refer to the CUCal pipeline
 illustrated in Figure~\ref{fig:pipeline}.
