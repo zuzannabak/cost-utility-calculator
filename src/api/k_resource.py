@@ -1,4 +1,5 @@
-from typing import Sequence, Mapping
+from dataclasses import dataclass
+from typing import Callable, Dict, Iterable, Sequence, Mapping
 
 
 def unit_costs(resource_ids: Sequence[str]) -> Mapping[str, float]:

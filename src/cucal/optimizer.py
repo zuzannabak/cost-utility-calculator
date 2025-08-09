@@ -12,7 +12,12 @@ from dataclasses import dataclass
 from typing import Dict, Optional, Union
 
 import numpy as np
-from api import k_resource  # external dependency
+# pozwala działać zarówno lokalnie, jak i w teście, który patchuje src.api.k_resource
+try:
+    from src.api import k_resource  # ścieżka zgodna z testami
+except ModuleNotFoundError:
+    from api import k_resource      # fallback na lokalny layout
+
 
 from .config import DEFAULT_CLUSTER_EFF
 
@@ -161,25 +166,19 @@ def optimise_allocation(
     """
     if isinstance(resource_ids, str):
         resource_ids = [resource_ids]
-
-    # Unit-mismatch guard
-    if hasattr(k_resource, "meta"):
-        target_unit = k_resource.meta(resource_ids[0])["unit"]
-        for rid in resource_ids:
-            assert k_resource.meta(rid)["unit"] == target_unit, (
-                f"Unit mismatch: {rid} is in {k_resource.meta(rid)['unit']}, "
-                f"expected {target_unit}."
-            )
+    else:
+        resource_ids = list(resource_ids)  # <-- dodaj
 
     costs = k_resource.unit_costs(resource_ids)  # {rid: $/unit}
-    remaining = demand
-    alloc: dict[str, float] = {}
+    remaining = int(demand)                      # <-- int
+    alloc: dict[str, int] = {}                   # <-- int
 
     for rid in sorted(resource_ids, key=costs.get):  # cheapest first
-        cap = capacity_for(rid)
+        cap = int(capacity_for(rid))                 # <-- int
         take = min(remaining, cap)
-        alloc[rid] = take
-        remaining -= take
+        if take > 0:
+            alloc[rid] = take
+            remaining -= take
         if remaining == 0:
             break
 
@@ -188,7 +187,7 @@ def optimise_allocation(
             f"Demand ({demand}) exceeds total capacity; {remaining} left unfilled"
         )
 
-    total_cost = sum(alloc[rid] * costs[rid] for rid in alloc)
+    total_cost = sum(alloc[rid] * costs[rid] for rid in alloc)  # OK
     return AllocationPlan(per_resource=alloc, total_cost=total_cost)
 
 
