@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main2"] 1754062291.15566 "main2.aux" "main2.bbl" "main2" 1754062347.84138 0
+["bibtex main2"] 1754749139.84636 "main2.aux" "main2.bbl" "main2" 1754749143.42514 0
   "./references.bib" 1753907954 3353 58d58525379017ff6208a21297ae089d ""
   "C:/Program Files/MiKTeX/bibtex/bst/natbib/plainnat.bst" 1284455456 26816 ffe5423d2019860bad9f54bc402fac15 ""
-  "main2.aux" 1754062346 7764 46e5a2ec2bbe1090b403833bc8ccb8f2 "pdflatex"
+  "main2.aux" 1754749142 9177 f5ca19ab7ff3822fcc4e7c89a2b2b1f4 "pdflatex"
   (generated)
   "main2.bbl"
   "main2.blg"
   (rewritten before read)
-["pdflatex"] 1754062344.26344 "c:/Users/zuzia/OneDrive - Temple University/Documents/MS Computational DS/Summer 2025/Research/Project/cost-utility-calculator/paper/main2.tex" "main2.pdf" "main2" 1754062347.84228 0
+["pdflatex"] 1754749140.17662 "c:/Users/zuzia/OneDrive - Temple University/Documents/MS Computational DS/Summer 2025/Research/Project/cost-utility-calculator/paper/main2.tex" "main2.pdf" "main2" 1754749143.42573 0
   "C:/Program Files/MiKTeX/tex/generic/bigintcalc/bigintcalc.sty" 1576433602 40635 c40361e206be584d448876bba8a64a3b ""
   "C:/Program Files/MiKTeX/tex/generic/bitset/bitset.sty" 1575926576 33961 6b5c75130e435b2bfdb9f480a09a39f9 ""
   "C:/Program Files/MiKTeX/tex/generic/gettitlestring/gettitlestring.sty" 1576433666 8371 9d55b8bd010bc717624922fb3477d92e ""
@@ -175,14 +175,14 @@
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/tex/latex/tools/verbatim.sty" 1700599895 7500 db31c3d04f8bc9010e47a5efbbace9ff ""
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/zuzia/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1700127522 55487 80a65caedd3722f4c20a14a69e785d8f ""
-  "c:/Users/zuzia/OneDrive - Temple University/Documents/MS Computational DS/Summer 2025/Research/Project/cost-utility-calculator/paper/main2.tex" 1754062343 22306 6fd793103970e306dbbcfaadf23b112a ""
+  "c:/Users/zuzia/OneDrive - Temple University/Documents/MS Computational DS/Summer 2025/Research/Project/cost-utility-calculator/paper/main2.tex" 1754749135 29907 4b2aafda520cad49b498778e15bc317d ""
   "figures/dragut_curves.pdf" 1753996403 16500 29128ddf0a5234197ad41f09e74a87f7 ""
   "figures/heatmap_eff.png" 1753997594 13825 b03b8181061eed278bdaf99c2bcca570 ""
   "figures/scenarioA.png" 1754057290 96136 e964076a07ddb8d9a0bff49688a6b0e0 ""
-  "main2.aux" 1754062346 7764 46e5a2ec2bbe1090b403833bc8ccb8f2 "pdflatex"
-  "main2.bbl" 1754062291 3446 f6131cf0bdbd1284978e7579378cc4a7 "bibtex main2"
-  "main2.out" 1754062346 3601 78d13ac6b601d099256c0fe8831c3d7d "pdflatex"
-  "main2.tex" 1754062343 22306 6fd793103970e306dbbcfaadf23b112a ""
+  "main2.aux" 1754749142 9177 f5ca19ab7ff3822fcc4e7c89a2b2b1f4 "pdflatex"
+  "main2.bbl" 1754749140 3446 f6131cf0bdbd1284978e7579378cc4a7 "bibtex main2"
+  "main2.out" 1754749142 4552 ec1205bc1c5c10c9bdf348b768ce120d "pdflatex"
+  "main2.tex" 1754749135 29907 4b2aafda520cad49b498778e15bc317d ""
   (generated)
   "main2.aux"
   "main2.log"

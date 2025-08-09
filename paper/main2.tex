@@ -111,8 +111,7 @@ CUCal offers:
         \emph{hit accuracy target at minimum cost};
   \item an interactive Streamlit GUI \emph{and} a batch-friendly CLI;
   \item a curated and growing bank of cost–accuracy curves
-        (109 commits, 14 test files; RMSE~\(\le\)0.05 for all fitted
-        curves to date).
+        (109 commits, 14 test files; avg.\ RMSE 0.037; all fits \(< 0.09\)).
 \end{enumerate}
 
 \paragraph{Contributions.}
@@ -235,12 +234,70 @@ works such as Angelopoulos et al.\ address \emph{evaluation} cost.
 None tackle multiple resource axes with user-defined hard caps.
 
 %----------------------------------------------------------------------
-\paragraph{Gap.}
-To date no framework (i) unifies labels, GPU, time and
-CO\textsubscript{2} in one optimisation loop, (ii) exposes an interactive
-GUI, and (iii) validates against peer-reviewed cost-utility curves.
-CUCal fills this gap and lays the groundwork for a 576-curve public corpus
-to further community research.
+\subsection{Economic Models for Budget Allocation}
+
+The CUCal problem is a resource-allocation task under monetary, time, and emissions constraints. We seek to maximise model utility (accuracy) subject to budgets, where empirical evidence suggests \emph{diminishing marginal returns} for both labeling effort and GPU compute. This motivates concave response functions and standard constrained-optimisation tools.
+
+\paragraph{Classical forms.}
+Two families widely used in economics capture complementarity and substitutability between inputs:
+\begin{align*}
+\text{Cobb--Douglas:}\quad
+&U(L,C) = A\, L^{\alpha} C^{\beta}, \qquad 0<\alpha,\beta<1 \\
+\text{CES:}\quad
+&U_{\mathrm{CES}}(L,C) = \bigl(w L^{\rho} + (1-w) C^{\rho}\bigr)^{1/\rho}, \qquad \rho \le 1,\; w\in(0,1).
+\end{align*}
+Cobb--Douglas encodes strict complementarity (both inputs matter) with diminishing returns via exponents $<1$. CES generalises this with a tunable elasticity of substitution.
+
+\paragraph{Single-axis saturating exponentials.}
+At the per-resource level, we model accuracy gains with saturating exponentials that reflect fast early improvements and a smooth plateau:
+\[
+u_R(n) \;=\; 1 - a_R \exp(-b_R n)
+\quad\text{for resource } R\in\{\text{labels},\text{compute}\},
+\]
+with $a_R\in(0,1]$ and $b_R>0$ fitted from literature curves. This form delivered low RMSE across datasets in our fits (see Table~2) and is numerically stable near $n=0$.
+
+\paragraph{Multi-axis aggregation.}
+To combine resources, we use a concave multiplicative aggregator
+\[
+U(L,C)\;=\; u_L(L)\cdot u_C(C),
+\]
+which encodes complementarity (neither labels nor compute suffices alone) while remaining simple and interpretable. Other concave aggregators (e.g., CES applied to $u_L,u_C$) are feasible and are left to future work.
+
+\paragraph{Constrained optimisation view (KKT intuition).}
+Let prices per unit be $p_L,p_C$, wall-clock coefficients $t_L,t_C$, and optional carbon factors $\kappa_C$. With budgets $B$ (money), $T$ (time), and $\Gamma$ (CO$_2$), the programme is
+\[
+\max_{L,C}\; U(L,C)
+\quad \text{s.t.}\quad
+p_L L + p_C C \le B,\;
+t_L L + t_C C \le T,\;
+\kappa_C C \le \Gamma,\;
+L,C \ge 0.
+\]
+At an interior optimum, the Lagrangian conditions equalise \emph{marginal utility per dollar} across resources:
+\[
+\frac{\partial U/\partial L}{p_L}
+\;=\;
+\frac{\partial U/\partial C}{p_C}
+\;=\;
+\lambda,
+\]
+modulated by active constraints (time/CO$_2$). Our implementation mirrors this logic with a transparent discrete search that respects hard caps and reports the active constraint(s).
+
+\paragraph{Why this choice here.}
+We adopt saturating exponentials at the axis level and a multiplicative aggregator because they (i) match reported curves with low RMSE (Table~2), (ii) avoid unstable behaviour at small budgets, and (iii) preserve concavity, giving predictable trade-offs when budgets, time, or carbon caps change.
+
+%----------------------------------------------------------------------
+\subsection{Comparison to Prior Work}
+
+\textbf{CS angle.} Prior work provides (i) empirical cost--accuracy curves for a \emph{single} resource stream, (ii) label-efficiency methods that typically ignore compute/carbon, and (iii) single-budget HPO that omits labeling and emissions. 
+\textbf{Economics angle.} Canonical allocation models (Cobb--Douglas, CES, Lagrangian/KKT) offer the theory of optimal splits, but we did not find an open, NLP-oriented implementation grounded in practitioner curves \emph{and} exposed via an interactive GUI.
+
+\textbf{CUCal borrows} the diminishing-returns premise and the use of carbon intensity as a constraint/metric. \textbf{CUCal differs} by \emph{jointly} optimising \textbf{labels + GPU} under \textbf{money, time, and CO$_2$ caps}, using public curve fits (Table~2) and a simple, auditable optimiser. Our experiments show that time caps often dominate the optimum, a behaviour not surfaced in single-budget setups (see Sections~4.2--4.3 and 6).
+
+%----------------------------------------------------------------------
+\noindent\textbf{Gap.}
+No existing framework (i) unifies \emph{labels, GPU, time, and CO$_2$} in a single optimisation loop, (ii) validates against peer-reviewed cost--accuracy curves, and (iii) exposes an \emph{interactive GUI} for auditability and what-if analysis. From an economics perspective, we also did not find an open, NLP-oriented implementation that \emph{operationalises shadow-price thinking} (marginal utility per dollar) across multiple resources while respecting \emph{hard} budget/time/emissions constraints.
+
 
 % =======================================================
 \section{Methodology}\label{sec:methodology}
@@ -299,6 +356,43 @@ Fitted parameters and their RMSE are listed in Table~\ref{tab:curves}.
 \end{table}
 
 Table~\ref{tab:curves} lists the fitted parameters and root-mean-square error (RMSE); all RMSE values are \(<0.09\).
+
+\subsubsection{Why a Saturating Exponential (and Multiplicative Combiner)?}
+
+We model per–resource gains with a saturating exponential
+\[
+u_R(n) \;=\; 1 - a_R e^{-b_R n}, \qquad a_R\in(0,1],\; b_R>0,
+\]
+because it (i) matches reported curves with low error (see Table~2), (ii) behaves sensibly at the boundaries, and (iii) is optimisation–friendly.
+
+\paragraph{Empirical fit quality.}
+Across the fitted datasets, the exponential form achieves low RMSE and captures the “fast early gains, smooth plateau” shape better than simple power laws (Table~2).
+
+\paragraph{Boundary behaviour \& interpretability.}
+The derivative near zero is finite,
+\[
+\left.\frac{d u_R}{dn}\right|_{n=0} \;=\; a_R b_R,
+\]
+avoiding unstable marginal gains at tiny budgets; concavity holds since
+\[
+\frac{d^2 u_R}{dn^2} \;=\; -a_R b_R^2 e^{-b_R n} \;<\; 0.
+\]
+The half–saturation point has a closed form,
+\[
+n_{1/2} \;=\; \frac{\ln 2}{b_R},
+\]
+which makes “how much effort to get halfway there?” directly interpretable.
+
+\paragraph{Multiplicative aggregation for two resources.}
+For labels $L$ and compute $C$ we combine axes as
+\[
+U(L,C) \;=\; u_L(L)\cdot u_C(C).
+\]
+This encodes complementarity (\,$U=0$ if either axis is $0$\,), preserves concavity under our fitted ranges, and yields predictable trade–offs: the marginal utility of $L$ is
+\[
+\frac{\partial U}{\partial L} \;=\; u_C(C)\,u_L'(L),
+\]
+so the value of an extra labeling dollar depends on the current compute level (and vice versa), mirroring economic “equalise marginal utility per dollar” intuition. The form is also simple to audit and pairs well with our transparent discrete search under money/time/CO$_2$ caps. (Alternative concave aggregators, e.g.\ CES applied to $u_L,u_C$, are feasible and left to future work.)
 
 
 \subsection{Objective and constraints}\label{sec:method:optim}
@@ -455,7 +549,7 @@ runtime scales linearly with $\eta^{-1}$.
 \end{figure}
 
 \subsection{E5 Ablation — remove time cap}
-With the 24 h cap \emph{ablated} lifted the optimum shifts to
+With the 24 h cap lifted, the optimum shifts to
 \$70 labels + \$330 GPU (accuracy 0.849) but stretches runtime
 to 38 h and adds 0.8 kg CO\(_2\) — confirming time as the
 dominant constraint.
@@ -531,6 +625,21 @@ Guided by Week-7 meeting notes, we plan to:
 CUCal is, to our knowledge, the first open-source tool that
 \emph{jointly} optimises labels, GPU time, wall-clock deadlines, and
 CO\textsubscript{2} footprint while respecting a monetary budget.
+
+\section{Lessons Learned}
+% (Optional) If you want this unnumbered section to appear in the ToC:
+% \addcontentsline{toc}{section}{7 Lessons Learned}
+
+\begin{itemize}
+  \item \textbf{Modeling.} Saturating exponentials fit practitioner data well and are numerically stable; the concave shape gives predictable behavior under budget splits (cf.\ Table~2).
+  \item \textbf{Combiner choice matters.} The multiplicative aggregator encodes complementarity (labels \emph{and} compute). Potential interactions (e.g., curriculum or quality effects) remain open work.
+  \item \textbf{Constraints dominate outcomes.} Time caps often move the optimum more than small price changes, so realistic wall-clock and cluster-efficiency estimates are critical.
+  \item \textbf{CO$_2$ can be reduced at low cost.} You can frequently cut emissions with little or no accuracy loss by avoiding long-tail GPU spending and selecting efficient hardware.
+  \item \textbf{Engineering trade-offs.} A small exhaustive search with coarse granularity is fast and auditable for two resources; for $k\!>\!3$ resources, switch to TPE/Bayesian search.
+  \item \textbf{Units and prices matter.} Standardising units (per-instance $\rightarrow$ per-hour) and stating all prices/throughputs explicitly prevents silent errors in the optimisation.
+  \item \textbf{Explainability helps adoption.} Reporting active constraints, marginal utility per dollar (shadow-price intuition), and reproducible configs makes results easier to trust and replicate.
+\end{itemize}
+
 
 \clearpage
 \bibliographystyle{plainnat}

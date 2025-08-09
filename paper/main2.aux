@@ -37,42 +37,53 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Dataset Valuation \& Active Learning}{3}{subsection.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Carbon-Aware Machine Learning}{3}{subsection.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Budget \& Hyper-Parameter Optimisation}{3}{subsection.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Gap.}{3}{section*.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Methodology}{3}{section.4}\protected@file@percent }
-\newlabel{sec:methodology}{{4}{3}{Methodology}{section.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Utility-curve fitting}{3}{subsection.4.1}\protected@file@percent }
-\newlabel{sec:method:fit}{{4.1}{3}{Utility-curve fitting}{subsection.4.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Symbols used throughout Section~\ref {sec:methodology}.}}{4}{table.1}\protected@file@percent }
-\newlabel{tab:notation}{{1}{4}{Symbols used throughout Section~\ref {sec:methodology}}{table.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Fitted cost–utility parameters used by CUCal.}}{4}{table.2}\protected@file@percent }
-\newlabel{tab:curves}{{2}{4}{Fitted cost–utility parameters used by CUCal}{table.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Objective and constraints}{4}{subsection.4.2}\protected@file@percent }
-\newlabel{sec:method:optim}{{4.2}{4}{Objective and constraints}{subsection.4.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Solver}{4}{subsection.4.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Processing pipeline: curve-fit stage feeds an exhaustive grid search that returns the globally optimal \$-split.}}{5}{figure.1}\protected@file@percent }
-\newlabel{fig:pipeline}{{1}{5}{Processing pipeline: curve-fit stage feeds an exhaustive grid search that returns the globally optimal \$-split}{figure.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Experiments}{5}{section.5}\protected@file@percent }
-\newlabel{sec:experiments}{{5}{5}{Experiments}{section.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}E1 Curve-fit validation}{5}{subsection.5.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces CUCal’s exponential fits (solid) against Dragut-2019 raw data (dots) on a common \$-axis.}}{5}{figure.2}\protected@file@percent }
-\newlabel{fig:dragut_curves}{{2}{5}{CUCal’s exponential fits (solid) against Dragut-2019 raw data (dots) on a common \$-axis}{figure.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}E2 Scenario A — maximise accuracy}{5}{subsection.5.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Goodness-of-fit for each curve (RMSE and 95\,\% CIs).}}{6}{table.3}\protected@file@percent }
-\newlabel{tab:rmse}{{3}{6}{Goodness-of-fit for each curve (RMSE and 95\,\% CIs)}{table.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Budget split (bars) and achieved accuracy (dashed line) for Scenario A.}}{6}{figure.3}\protected@file@percent }
-\newlabel{fig:scenarioA}{{3}{6}{Budget split (bars) and achieved accuracy (dashed line) for Scenario A}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}E3 Scenario B — hit accuracy target}{6}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}E4 Efficiency sensitivity}{6}{subsection.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}E5 Ablation — remove time cap}{6}{subsection.5.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Minimal cost (colour) required to reach \SI {0.83}{\fOneScore } as cluster efficiency $\eta $ varies.}}{7}{figure.4}\protected@file@percent }
-\newlabel{fig:heatmap}{{4}{7}{Minimal cost (colour) required to reach \SI {0.83}{\fOneScore } as cluster efficiency $\eta $ varies}{figure.4}{}}
-\@writefile{toc}{\contentsline {paragraph}{Summary.}{7}{section*.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion \& Conclusion}{7}{section.6}\protected@file@percent }
-\newlabel{sec:discussion}{{6}{7}{Discussion \& Conclusion}{section.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Key Findings}{7}{subsection.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Limitations}{7}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Future Directions}{8}{subsection.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Take-away}{8}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Economic Models for Budget Allocation}{3}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Classical forms.}{3}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Single-axis saturating exponentials.}{4}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Multi-axis aggregation.}{4}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Constrained optimisation view (KKT intuition).}{4}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why this choice here.}{4}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Comparison to Prior Work}{4}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Methodology}{5}{section.4}\protected@file@percent }
+\newlabel{sec:methodology}{{4}{5}{Methodology}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Utility-curve fitting}{5}{subsection.4.1}\protected@file@percent }
+\newlabel{sec:method:fit}{{4.1}{5}{Utility-curve fitting}{subsection.4.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Symbols used throughout Section~\ref {sec:methodology}.}}{5}{table.1}\protected@file@percent }
+\newlabel{tab:notation}{{1}{5}{Symbols used throughout Section~\ref {sec:methodology}}{table.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Fitted cost–utility parameters used by CUCal.}}{5}{table.2}\protected@file@percent }
+\newlabel{tab:curves}{{2}{5}{Fitted cost–utility parameters used by CUCal}{table.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}Why a Saturating Exponential (and Multiplicative Combiner)?}{5}{subsubsection.4.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Empirical fit quality.}{5}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Boundary behaviour \& interpretability.}{6}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Multiplicative aggregation for two resources.}{6}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Objective and constraints}{6}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:method:optim}{{4.2}{6}{Objective and constraints}{subsection.4.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Solver}{6}{subsection.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Processing pipeline: curve-fit stage feeds an exhaustive grid search that returns the globally optimal \$-split.}}{7}{figure.1}\protected@file@percent }
+\newlabel{fig:pipeline}{{1}{7}{Processing pipeline: curve-fit stage feeds an exhaustive grid search that returns the globally optimal \$-split}{figure.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Experiments}{7}{section.5}\protected@file@percent }
+\newlabel{sec:experiments}{{5}{7}{Experiments}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}E1 Curve-fit validation}{7}{subsection.5.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces CUCal’s exponential fits (solid) against Dragut-2019 raw data (dots) on a common \$-axis.}}{7}{figure.2}\protected@file@percent }
+\newlabel{fig:dragut_curves}{{2}{7}{CUCal’s exponential fits (solid) against Dragut-2019 raw data (dots) on a common \$-axis}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}E2 Scenario A — maximise accuracy}{7}{subsection.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Goodness-of-fit for each curve (RMSE and 95\,\% CIs).}}{8}{table.3}\protected@file@percent }
+\newlabel{tab:rmse}{{3}{8}{Goodness-of-fit for each curve (RMSE and 95\,\% CIs)}{table.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Budget split (bars) and achieved accuracy (dashed line) for Scenario A.}}{8}{figure.3}\protected@file@percent }
+\newlabel{fig:scenarioA}{{3}{8}{Budget split (bars) and achieved accuracy (dashed line) for Scenario A}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}E3 Scenario B — hit accuracy target}{8}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}E4 Efficiency sensitivity}{8}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}E5 Ablation — remove time cap}{8}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Summary.}{8}{section*.16}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Minimal cost (colour) required to reach \SI {0.83}{\fOneScore } as cluster efficiency $\eta $ varies.}}{9}{figure.4}\protected@file@percent }
+\newlabel{fig:heatmap}{{4}{9}{Minimal cost (colour) required to reach \SI {0.83}{\fOneScore } as cluster efficiency $\eta $ varies}{figure.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion \& Conclusion}{9}{section.6}\protected@file@percent }
+\newlabel{sec:discussion}{{6}{9}{Discussion \& Conclusion}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Key Findings}{9}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Limitations}{9}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Future Directions}{10}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Take-away}{10}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Lessons Learned}{10}{section.7}\protected@file@percent }
 \bibstyle{plainnat}
 \bibdata{references}
 \bibcite{Angelopoulos2025}{{1}{2025}{{Angelopoulos and Others}}{{}}}
@@ -92,4 +103,4 @@
 \bibcite{Schwartz2020}{{15}{2020}{{Schwartz and Others}}{{}}}
 \bibcite{Stiennon2021}{{16}{2021}{{Stiennon and Others}}{{}}}
 \bibcite{Wu2024}{{17}{2024}{{Wu}}{{}}}
-\gdef \@abspage@last{9}
+\gdef \@abspage@last{12}
