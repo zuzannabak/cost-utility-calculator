@@ -1,123 +1,72 @@
 # Cost–Utility Calculator for NLP Model Development
 
-Economic decision-support tool that recommends how to split a fixed budget
-between **knowledge-distillation compute** and **human annotation** when fine-tuning
-compact NLP models.
+An interactive Python tool for optimizing how to allocate a fixed budget between **data labeling**, **GPU compute**, and other resources when fine-tuning compact NLP models.  
+Implements cost-utility curves from recent papers and recommends efficient configurations under accuracy, time, and energy constraints.
 
----
+## Overview
 
-## 🔧 Key Features
+This tool models the trade-off between human annotation and compute cost in machine learning.  
+It uses saturating-log accuracy curves fitted to literature data (Dragut 2019; Kang 2023; Stiennon 2021) and performs exhaustive or gradient-based search to recommend optimal spending strategies.
 
-- 💸 **Cost/utility optimiser** – compute the best allocation of dollars across multiple resources: labels, GPU, dev time.
-- 📈 **Diminishing-return curve fitting** – supports log-saturation accuracy curves from real papers (Dragut, Kang, Stiennon).
-- 📊 **k-resource support (NEW)** – generalised optimiser allows >2 dimensions (e.g., tool-build, expert effort).
-- 🕒 **Time-budget constraint** – slider enforces wall-clock caps.
-- 🌍 **CO₂ calculator** – estimates carbon footprint from GPU-hours using region-specific grid intensity.
-- 🐚 **CLI + Streamlit GUI** – reproducible simulations via CLI or web sliders.
-- 📋 **Exportable results** – JSON plan + CLI snippet generated for each run.
-- ✅ **Tests + CI** – 14+ Pytest files, flake8 linter, and GitHub Actions CI.
+## Key Features
+- **Budget optimizer** for multiple resources (labels, GPU, dev effort).  
+- **Time and CO₂ constraints** integrated into the model.  
+- **Curve fitting** based on real research datasets.  
+- **Two interfaces:** Streamlit GUI & Python CLI.  
+- **Configurable JSON inputs** for adding new tasks.  
+- **Unit-tested** and easily extensible.
 
----
-
-## 🎯 Project Goals
-
-1. Formalise the budget allocation problem under diminishing-return curves.
-2. Build an extensible simulator that outputs optimal mixes under cost, time, and energy constraints.
-3. Validate with multiple case-studies (entity extraction, RLHF summarisation).
-4. Lay groundwork for future meta-models that learn utility functions from research papers.
-
----
-
-## 📂 Folder Structure
-
-📁 notebooks/ – prototypes, validation notebooks  
-📁 src/ – simulator modules (`optimizer.py`, `resource.py`, etc.)  
-📁 data/ – cost/unit tables, curves.json, resources.json  
-📁 docs/ – literature scan, figures, README artefacts  
-📁 tests/ – Pytest validations for optimiser and simulation
-
----
-
-## 🚀 Quick Start (local)
+## Quick Start
 
 ```bash
 git clone https://github.com/zuzannabak/cost-utility-calculator.git
 cd cost-utility-calculator
-
-# --- Set up environment ---
-python -m venv .venv && source .venv/bin/activate
-pip install -e .[dev]  # with extras
-```
-
-Or using Conda:
-
-```bash
-conda create -n cucal python=3.11
-conda activate cucal
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### ▶️ Run GUI
+## Launch GUI
 
 ```bash
 streamlit run app.py
 ```
 
-Then:
-- Adjust label/GPU cost sliders
-- Set total budget + (optional) time limit
-- Export JSON result or copy CLI snippet
+Then open [http://localhost:8501](http://localhost:8501) to explore.
 
----
-
-### 🖥️ Run from CLI
-
+## Run from CLI
 ```bash
-python -m cost_utility_calculator \
+python -m cucal.cli \
   --task dragut_2019 \
   --budget 3000 \
   --label-cost 0.07 \
   --gpu-cost 1.50 \
-  --max-gpu-hours 800 \
-  --wall-clock-limit 72
+  --max-gpu-hours 800
 ```
 
-Returns optimal split + expected accuracy + utility.
+## Repositry Layout
+```bash
+.
+├─ src/cucal/       # Core modules: optimizer, curves, config, CLI
+├─ data/            # Curve and resource configs
+├─ docs/            # Figures, screenshots, paper notes
+├─ notebooks/       # Validation & prototypes
+├─ tests/           # Unit tests
+├─ app.py           # Streamlit entry point
+└─ report.pdf       # Final report / summary
+```
 
----
+## Example Screenshot
 
-## 📚 Literature Meta-Estimate
+(optional – place in docs/ui-preview.png)
 
-A semi-automated scan using ScholarGPT + Semantic Scholar reveals:
+## References
 
-- 12/25 sampled papers include usable cost/accuracy curves.
-- Estimated ~576 papers (2015–2025) include such plots.
-- See `docs/lit_candidates.md` + `lit_stats.json`.
+* Dragut et al., Human-in-the-Loop Entity Extraction (KDD 2019)
+* Kang et al., Distill or Annotate? Cost-Efficient Fine-Tuning (2023)
+* Stiennon et al., Learning to Summarize with Human Feedback (EMNLP 2021)
 
-These curves can be used for:
-- Refitting new cost/utility functions
-- Training ML models to generalise trade-offs
-
----
-
-## 📅 Roadmap (Done ✅)
-
-- ✅ Week 0–1: Abstract + curve prototypes + literature matrix
-- ✅ Week 2–3: Optimiser implemented for 2D
-- ✅ Week 4–5: GUI + JSON/CLI export; Dragut validation (70%)
-- ✅ Week 6: Multi-resource generalisation + CO₂ module
-- ✅ Week 7: Validation tests, paper estimate, k-resource unit tests
-- 🔜 Week 8: Report writing + demo prep
-
----
-
-## 📖 References
-
-- Dragut et al. (2019). *Human-in-the-Loop Entity Extraction*. KDD.  
-- Kang et al. (2023). *Distill or Annotate? Cost-Efficient Fine-Tuning*. arXiv:2305.01645  
-- Stiennon et al. (2021). *Learning to Summarize with Human Feedback*. EMNLP  
-
----
-
-Built with 💡 for research reproducibility and sustainability.
-
+## Author
+Zuzanna Bąk
+M.S. Computational Data Science, Temple University
+zuzanna.bak@temple.edu
