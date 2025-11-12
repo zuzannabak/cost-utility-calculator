@@ -196,3 +196,24 @@ nq_*_all.json
 stanceosaurus_*_all.json
 wlp_*_all.json
 multipit_id_train_all.json
+# Local environments and caches
+.venv/
+cost-util-venv/
+anaconda_projects/
+__pycache__/
+*.egg-info/
+build/
+dist/
+.virtual_documents/
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+
+# Data & heavy local content
+data/
+notebooks/
+paper/
+scripts/
+docs/
+figures/
+report.pdf
