@@ -7,10 +7,10 @@ from pathlib import Path
 
 import streamlit as st
 
-from src.cucal.curves import get_curves
-from src.cucal.optimizer import optimise_budget
-from src.cucal.hardware import load_hardware, calculate_energy
-from src.cucal.config import DEFAULT_CLUSTER_EFF
+from cucal.curves import get_curves
+from cucal.optimizer import optimise_budget
+from cucal.hardware import load_hardware, calculate_energy
+from cucal.config import DEFAULT_CLUSTER_EFF
 
 # -----------------------------  Layout & title  ----------------------------#
 st.set_page_config(page_title="Cost-Utility Calculator", page_icon="🚀")
