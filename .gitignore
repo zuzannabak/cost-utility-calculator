@@ -178,3 +178,21 @@ anaconda_projects/**
 *.db
 tmp_dragut/
 .virtual_documents/
+
+# Streamlit cruft
+.streamlit/
+
+# Data — trzymaj w repo TYLKO curves.json
+data/**
+!data/curves.json
+
+# Duże zbiory i pliki robocze (nie wersjonujemy)
+tmp_*/
+**/tmp_*/
+*_train_*.json
+*_test_*.json
+*_dev_*.json
+nq_*_all.json
+stanceosaurus_*_all.json
+wlp_*_all.json
+multipit_id_train_all.json
