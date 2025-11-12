@@ -9,8 +9,8 @@ def dummy_capacity(rid: str) -> float:
 def test_k_resource_exact_fill(monkeypatch):
     # Fake prices so test is deterministic
     monkeypatch.setattr(
-        "src.api.k_resource.unit_costs",
-        lambda ids: {rid: 1.0 + i for i, rid in enumerate(ids)},  # $1, $2, $3
+        "cucal.api.k_resource.unit_costs",
+        lambda ids: {rid: 1.0 + i for i, rid in enumerate(ids)}
     )
 
     plan = optimise_allocation(

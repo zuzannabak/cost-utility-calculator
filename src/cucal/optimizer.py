@@ -14,9 +14,9 @@ from typing import Dict, Optional, Union
 import numpy as np
 # pozwala działać zarówno lokalnie, jak i w teście, który patchuje src.api.k_resource
 try:
-    from src.api import k_resource  # ścieżka zgodna z testami
+    from cucal.api import k_resource  # ścieżka zgodna z testami
 except ModuleNotFoundError:
-    from api import k_resource      # fallback na lokalny layout
+    from cucal.api import k_resource      # fallback na lokalny layout
 
 
 from .config import DEFAULT_CLUSTER_EFF

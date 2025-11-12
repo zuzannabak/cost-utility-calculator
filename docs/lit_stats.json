@@ -1,9 +1,0 @@
-{
-  "sample_reviewed": 25,
-  "papers_with_curves": 12,
-  "curve_ratio": 0.48,
-  "domain_estimate_total": 1200,
-  "estimated_curve_papers": 576,
-  "methodology": "Estimate based on sampled scholarly search using cost-aware active learning + NLP + budget trade-off keywords. Ratio of papers with extractable curves (accuracy vs. label/compute cost) was applied to total domain paper count from Semantic Scholar and Google Scholar (~1200).",
-  "use": "Supports future work in meta-learning utility functions from papers with cost-performance plots."
-}
