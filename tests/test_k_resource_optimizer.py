@@ -5,10 +5,11 @@ from cucal.optimizer import optimise_allocation
 def dummy_capacity(rid: str) -> float:
     return {"rA": 50, "rB": 30, "rC": 100}[rid]
 
+
 def test_k_resource_exact_fill(monkeypatch):
     # Fake prices so test is deterministic
     monkeypatch.setattr(
-        "cucal.api.k_resource.unit_costs", 
+        "cucal.api.k_resource.unit_costs",
         lambda ids: {rid: 1.0 + i for i, rid in enumerate(ids)}
     )
 
