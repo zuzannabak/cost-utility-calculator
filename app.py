@@ -6,10 +6,9 @@ import json
 from pathlib import Path
 
 import streamlit as st
-
 from cucal.curves import get_curves
 from cucal.optimizer import optimise_budget
-from cucal.hardware import load_hardware, calculate_energy
+from cucal.hardware import load_hardware, calculate_energy, co2_equivalent
 from cucal.config import DEFAULT_CLUSTER_EFF
 
 # -----------------------------  Layout & title  ----------------------------#
@@ -83,10 +82,12 @@ res = optimise_budget(
     budget=budget,
     curve_label=curve_lbl,
     curve_gpu=curve_gpu,
-    curve_rmse=rmse_value,  # task-level RMSE for error bars
+    label_rmse=rmse_value,
+    gamma=gamma,
     max_gpu_hours=gpu_cap,
     wall_clock_limit_hours=wall_limit,
     cluster_efficiency_pct=efficiency_pct,
+    target_accuracy=target_acc,
 )
 
 # ---------------------------  Display results  ----------------------------#
@@ -94,25 +95,27 @@ if res is None:
     st.warning("⚠️  No feasible allocation. Increase budget or relax caps.")
     st.stop()
 
-label_hours = res["labels"] / gamma if gamma > 0 else 0.0
+# --- define values from the result dict ---
 mean = res["accuracy"]
-std = res["accuracy_std"]
 lo, hi = res["accuracy_ci"]
+label_hours = (res["labels"] / gamma) if gamma > 0 else 0.0
 
-# If user set a target, tell them whether we reach it
-if target_acc is not None and mean < target_acc:
-    st.warning(
-        f"⚠️  With budget ${budget:.0f}, best achievable accuracy is "
-        f"{mean:.3f}, below the target {target_acc:.3f}."
-    )
+# If user set a target, tell them whether we reach it (UI-only)
+if target_acc is not None:
+    if mean < target_acc:
+        st.warning(
+            f"⚠️  With budget ${budget:.0f}, best achievable accuracy is "
+            f"{mean:.3f}, below the target {target_acc:.3f}."
+        )
+    else:
+        st.success(f"Target {target_acc:.3f} is achievable (best ≈ {mean:.3f}).")
 
 st.metric(
     "Expected accuracy",
     f"{mean:.3f}",
-    delta=f"±{std:.3f}",
-    delta_color="off",
     help=f"95 % CI: {lo:.3f} – {hi:.3f}",
 )
+
 
 st.markdown(
     f"""
@@ -175,8 +178,7 @@ co2_grid = st.slider(
 if st.button("Compute energy"):
     power = hardware_db[selected_gpu]["power"]  # W
     energy = calculate_energy(power, gpu_hours)  # Wh
-    from src.cucal.hardware import co2_equivalent
-
+    
     co2 = co2_equivalent(energy, co2_grid)
     st.success(
         f"**Energy:** {energy:,.0f} Wh  |  "
