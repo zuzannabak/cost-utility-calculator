@@ -115,7 +115,7 @@ data/**
 # Research / local-only folders
 notebooks/
 paper/
-scripts/
+scripts/**
 !scripts/validate_dragut.py
 docs/
 figures/
