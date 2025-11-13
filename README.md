@@ -8,7 +8,13 @@ Implements cost–utility curves from recent literature and recommends efficient
 This calculator models the trade-off between human annotation and compute cost in machine learning pipelines.
 It fits saturating-log accuracy curves to experimental data (Dragut 2019; Kang 2023; Stiennon 2021) and uses exhaustive or gradient-based optimization to find cost-efficient configurations.
 
+## Tech Stack
+
+Python, NumPy, SciPy, pandas, Matplotlib, Streamlit, pytest, 
+GitHub Actions (CI), JSON-based configs, modular packaging
+
 ## Key Features
+
 * Multi-resource budget optimizer — labels, GPUs, and developer effort.
 * Constraints on total cost, time, and energy (cluster-efficiency aware).
 * Curve fitting based on real empirical studies.
@@ -39,6 +45,7 @@ streamlit run app.py
 Then open [http://localhost:8501](http://localhost:8501) in your browser.
 
 ## Run from CLI
+
 ```bash
 python -m cucal.cli \
   --task dragut_2019 \
@@ -49,14 +56,16 @@ python -m cucal.cli \
 ```
 
 ## Repositry Structure
+
 ```bash
 .
 ├─ src/cucal/          # Core package: optimizer, curves, config, CLI
-├─ data/               # Curves and resource definitions (curves.json)
-├─ scripts/            # Validation and automation scripts
+├─ data/               # Curves and resource definitions (curves.json only)
+├─ scripts/            # Validation & curve-fitting scripts
 ├─ tests/              # Unit tests (pytest)
+├─ assets/             # Screenshots & demo video
 ├─ app.py              # Streamlit entry point
-└─ README.md           # Project documentation
+└─ README.md           # Documentation
 ```
 
 ## Documentation & Report
