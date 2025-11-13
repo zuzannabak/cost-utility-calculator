@@ -119,7 +119,6 @@ scripts/**
 !scripts/validate_dragut.py
 docs/
 figures/
-report.pdf
 
 # ========================
 # END
