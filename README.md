@@ -72,9 +72,14 @@ The report includes:
 
 ## Local Demo Video
 
-You can view the demo video offline in:
-<h2>🎥 Demo</h2>
-<video src="assets/demo.mp4" controls width="720"></video>
+<p align="center">
+  <video src="assets/demo.mp4" controls width="720">
+    Your browser does not support the video tag.
+  </video>
+</p>
+
+[Download / open demo.mp4](assets/demo.mp4)
+
 
 
 ## References
