@@ -70,15 +70,20 @@ The report includes:
 - Streamlit UI explanation
 - Discussion and limitations
 
-## Visualization and demo video
+## Visualization and Demo Video
 
-![Example of what the app look like for "Maximize accuracy"](assets/cucal-max1.png)
+**Figure 1 – GUI: Maximize Accuracy mode**  
+![Example of what the app looks like in “Maximize accuracy” mode](assets/cucal-max1.png)
 
+**Figure 2 – Resource Allocation & Energy Calculation**  
 ![Allocation of resources and calculation of energy usage](assets/cucal-max2.png)
 
-![Example of what the app look like for "Hit accuracy taget "](assets/cucal-target.png)
+**Figure 3 – GUI: Hit Accuracy Target mode**  
+![Example of what the app looks like in “Hit accuracy target” mode](assets/cucal-target.png)
 
-[Download / open demo.mp4](assets/demo.mp4)
+**Demo Video**  
+[▶️ Click here to open `demo.mp4`](assets/demo.mp4)
+
 
 ## References
 
