@@ -70,12 +70,15 @@ The report includes:
 - Streamlit UI explanation
 - Discussion and limitations
 
-## Local Demo Video
+## Visualization and demo video
 
-You can view the demo video offline in:
-<h2>🎥 Demo</h2>
-<video src="assets/demo.mp4" controls width="720"></video>
+![Example of what the app look like for "Maximize accuracy"](assets/cucal-max1.png)
 
+![Allocation of resources and calculation of energy usage](assets/cucal-max2.png)
+
+![Example of what the app look like for "Hit accuracy taget "](assets/cucal-target.png)
+
+[Download / open demo.mp4](assets/demo.mp4)
 
 ## References
 
